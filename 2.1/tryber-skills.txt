@@ -1,0 +1,5 @@
+o que vou aprender
+
+- Unix
+- bash ssh
+- git  github
