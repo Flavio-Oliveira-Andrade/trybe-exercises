@@ -25,3 +25,38 @@
   /* insira aqui uma borda com valor '5px solid black' para aplicá-la ao item D */
     border: 5px solid black;
   }
+
+  #mari{
+      text-align:center;
+      color:rgb(1, 12, 20);
+      font-size: 50px;
+      background-color: rgb(100, 214, 129);
+      border: radius 50px;
+  }
+
+ .super-mario {
+     width:350px;
+    
+    
+
+     
+ }
+
+ .goomba { 
+     width:200px;
+     
+}
+
+
+ .word{
+
+ }
+
+ .baloon{
+    width:100px;
+ }
+
+ .bowser{
+     width:100px;
+ }
+    
