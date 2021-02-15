@@ -67,9 +67,9 @@
  }
 
  #site  {
-   background-color:#f2f8ff;
+   background-color:#fefeff;
    
-   color:wheat;
+   color:rgb(226, 151, 12);
    margin-left: 0px;
    padding-left: 0px;
    
@@ -88,4 +88,22 @@
 #site li:active{
   color:#ffffff;
   
+}
+#corprimaria {
+background-color:yellow;
+}
+#corsecundaria{
+  background-color:red;
+}
+
+#corcomplementar{
+  background-color:blue;
+}
+#corescura{
+  background-color:black;
+  color: #fefeff;
+}
+#corclara{
+  background-color:rgb(124, 132, 133);
+  color:#fefeff;
 }
