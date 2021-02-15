@@ -30,7 +30,7 @@
       text-align:center;
       color:rgb(1, 12, 20);
       font-size: 50px;
-      background-color: rgb(100, 214, 129);
+      background-color: rgb(71, 179, 98);
       border: radius 50px;
   }
 
@@ -59,4 +59,33 @@
  .bowser{
      width:100px;
  }
-    
+ 
+ .meio{
+     text-align: center;
+     padding: 1px;
+     margin-bottom: 30px;
+ }
+
+ #site  {
+   background-color:#f2f8ff;
+   
+   color:wheat;
+   margin-left: 0px;
+   padding-left: 0px;
+   
+   
+ }
+ 
+#site ul li {
+  list-style: none;
+  
+}
+
+#site li:hover {
+  background-color:blue;
+
+}
+#site li:active{
+  color:#ffffff;
+  
+}
