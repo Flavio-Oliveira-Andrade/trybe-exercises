@@ -1,8 +1,10 @@
 .nitendo h1{
 text-align:center;
 
+
 }
 .super-mario {
+    padding:30px;
     width: 300px;
     position:absolute;
     top: 20px;
@@ -11,6 +13,7 @@ text-align:center;
 }
 
 .goomba{
+    padding:30px;
     width: 200px;
     position: absolute;
     top: 406px;
