@@ -1,0 +1,46 @@
+.nitendo h1{
+text-align:center;
+
+}
+.super-mario {
+    width: 300px;
+    position:absolute;
+    top: 20px;
+    left: 25%;
+    z-index: 1;
+}
+
+.goomba{
+    width: 200px;
+    position: absolute;
+    top: 406px;
+    left: 34%;
+    z-index: 2;
+  
+}
+
+.word{
+    width: 100px;
+    position: absolute;
+    top: 630px;
+    left: 58%;
+    z-index: 4;
+  
+}
+.baloon{
+    width: 250px;
+    position: absolute;
+    top: 590px;
+    left: 52%;
+    z-index: 3;
+  
+}
+
+.bowser{
+    width:300px;
+    position: absolute;
+    top: 650px;
+    left: 70%;
+    z-index: 5;
+  
+}
