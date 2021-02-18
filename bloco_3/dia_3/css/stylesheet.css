@@ -102,6 +102,7 @@ background-color:yellow;
 #corescura{
   background-color:black;
   color: #fefeff;
+  height: 50px; 
 }
 #corclara{
   background-color:rgb(124, 132, 133);
