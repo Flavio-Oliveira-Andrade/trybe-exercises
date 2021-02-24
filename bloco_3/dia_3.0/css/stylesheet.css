@@ -1,0 +1,110 @@
+.caixa {
+    color: white;
+    display: inline-block;
+    line-height: 50px;
+    text-align: center;
+    vertical-align: top;
+  }
+
+  .width-and-height {
+    height: 50px;
+    width: 50px;
+  }
+
+  .padding {
+  /* insira aqui um padding de 20px na classe abaixo para aplicá-lo aos itens B, C e D */
+    padding: 20px;
+  }
+
+  .margin {
+  /* insira aqui uma margem de 30px na classe abaixo para aplicá-la aos itens C e D */
+    margin:30px;
+  }
+
+  .border {
+  /* insira aqui uma borda com valor '5px solid black' para aplicá-la ao item D */
+    border: 5px solid black;
+  }
+
+  #mari{
+      text-align:center;
+      color:rgb(1, 12, 20);
+      font-size: 50px;
+      background-color: rgb(71, 179, 98);
+      border: radius 50px;
+  }
+
+ .super-mario {
+     width:350px;
+    
+    
+
+     
+ }
+
+ .goomba { 
+     width:200px;
+     
+}
+
+
+ .word{
+
+ }
+
+ .baloon{
+    width:100px;
+ }
+
+ .bowser{
+     width:100px;
+ }
+ 
+ .meio{
+     text-align: center;
+     padding: 1px;
+     margin-bottom: 30px;
+ }
+
+ #site  {
+   background-color:#fefeff;
+   
+   color:rgb(226, 151, 12);
+   margin-left: 0px;
+   padding-left: 0px;
+   
+   
+ }
+ 
+#site ul li {
+  list-style: none;
+  
+}
+
+#site li:hover {
+  background-color:blue;
+
+}
+#site li:active{
+  color:#ffffff;
+  
+}
+#corprimaria {
+background-color:yellow;
+}
+#corsecundaria{
+  background-color:red;
+}
+
+#corcomplementar{
+  background-color:blue;
+}
+#corescura{
+  background-color:black;
+  color: #fefeff;
+  height: 50px; 
+}
+#corclara{
+  background-color:rgb(124, 132, 133);
+  color:#dbdbe6;
+}
