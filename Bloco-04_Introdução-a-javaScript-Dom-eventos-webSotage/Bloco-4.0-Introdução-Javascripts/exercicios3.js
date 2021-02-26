@@ -12,6 +12,28 @@ Bonus: use somente um if .
 Escreva um programa que defina três números em variáveis no seu começo e retorne true se pelo menos uma das três for ímpar. Caso contrário, ele retorna false .
 Bonus: use somente um if .
 */
+let nota =  -50;
+
+if ( nota >=90 && nota <=100){
+    console.log("A") ;
+}else if (nota >= 80 && nota <=100){
+    console.log("B") ;
+}else if (nota >=70 && nota <=100){
+    console.log("C") ;
+}else if (nota >=60 && nota <=100){
+    console.log("D") ;
+}else if (nota >=50 && nota <=100){
+    console.log("E") ;
+}else if (nota < 50 && nota > 0){
+    console.log("f") ;
+}else {
+    console.log("nota invalida");
+}
+
+
+
+
+
 
 
 
