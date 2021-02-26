@@ -2,4 +2,4 @@ let megaSenaNumeros = [];
 
 
 
-console.log(math.random());
+console.log(Math.random()* 60);
