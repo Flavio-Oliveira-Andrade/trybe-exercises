@@ -31,22 +31,40 @@ if ( nota >=90 && nota <=100){
 }
 
 
-
-
-
-
-
+// feito tratamento de erro na operação 
 
 
 /* 11
-Escreva um programa que se inicie com dois valores em duas variáveis diferentes: o custo de um produto e seu valor de venda. A partir dos valores, calcule quanto de lucro (valor de venda descontado o custo do produto) a empresa terá ao vender mil desses produtos.
-Atente que, sobre o custo do produto, incide um imposto de 20%.
+Escreva um programa que se inicie com dois valores em duas variáveis diferentes: /
+o custo de um produto e seu valor de venda.                                      /   
+A partir dos valores, calcule quanto de lucro (valor de venda descontado o custo do produto) 
+a empresa terá ao vender mil desses produtos./
+Atente que, sobre o custo do produto, incide um imposto de 20%./
+
 Seu programa também deve emitir uma mensagem de erro e encerrar caso algum dos seus valores de entrada seja menor que zero.
 O lucro de um produto é o resultado da subtração do valor de venda pelo custo do mesmo, sendo que o imposto de 20% também faz parte do valor de custo.
 valorCustoTotal = valorCusto + impostoSobreOCusto
 lucro = valorVenda - valorCustoTotal (lucro de um produto)
-Uma pessoa que trabalha de carteira assinada no Brasil tem descontados de seu salário bruto o INSS e o IR. Faça um programa que, dado um salário bruto, calcule o líquido a ser recebido.
-A notação para um salário de R$1500,10, por exemplo, deve ser 1500.10. Para as faixas de impostos, use as seguintes referências:
+*/
+
+let produtoCusto = 100;
+let produtoValorVenda =  produtoCusto * 1.20;
+let vendasmes = 1000
+let VendasValorBruto = vendasmes * produtoValorVenda;
+let ValorCusto = produtoCusto * vendasmes;
+let lucro = VendasValorBruto - ValorCusto;
+
+
+console.log("vendas valor totais " + VendasValorBruto);
+console.log("Valor de custo :" + ValorCusto);
+console.log("valor de lucro " + lucro);
+
+
+/*
+Uma pessoa que trabalha de carteira assinada no Brasil tem descontados de seu salário bruto o INSS e o IR.
+Faça um programa que, dado um salário bruto, calcule o líquido a ser recebido.
+A notação para um salário de R$1500,10, por exemplo, deve ser 1500.10.
+Para as faixas de impostos, use as seguintes referências:
 INSS
 Salário bruto até R$ 1.556,94: alíquota de 8%
 Salário bruto de R$ 1.556,95 a R$ 2.594,92: alíquota de 9%
@@ -71,3 +89,5 @@ Resultado: R$ 2.612,55.
 Dica: que tal identificar as alíquotas com variáveis de nomes explicativos?
 
 */
+
+
