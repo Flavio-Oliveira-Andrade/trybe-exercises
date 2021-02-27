@@ -24,11 +24,38 @@ if(text) {
 let pizzas = ['pizza1' , 'pizza2' , 'pizza3'] ;
 pizzas.push('pizza4');
 pizzas.push('pizza5');
+pizzas.push('pizza6');
+pizzas.unshift('pizza01'); // .unshift
+pizzas.unshift('pizza00'); // colo um item no inicio da array
+pizzas.pop(); // remove ultimo item da lista 
+pizzas.shift() // remove primeiro item  da lista 
 
-console.log(pizzas)
-console.log(pizzas.length)
-console.log(pizzas[0])
+//console.log(pizzas) 
+//console.log(pizzas.length)
+//console.log(pizzas[0])
+
 
 for (let index = 0 ; index < pizzas.length ; index+=1){
     console.log(pizzas[index]);
 }
+
+//imprimir posição no array
+let tasksList = ['Tomar café', 'Reunião', 'Brincar com o cachorro'];
+
+let searchForFirstTask = tasksList[0];
+console.log(searchForFirstTask);
+// Tomar café
+
+let searchForLastTask = tasksList[tasksList.length - 1];
+console.log(searchForLastTask);
+// Brincar com o cachorro
+
+
+
+//console.log(indexOfTask);  procura um indice no array
+
+
+
+// switch case 
+
+
