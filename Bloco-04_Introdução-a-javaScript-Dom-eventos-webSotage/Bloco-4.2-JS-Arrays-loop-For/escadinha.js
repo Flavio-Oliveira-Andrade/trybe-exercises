@@ -35,3 +35,21 @@ for (let i = 0; i < n ; i ++){
   linha1.push("*")
   console.log(espacos.join(""),linha1.join(""));
 }
+
+
+
+
+let m = 5
+let asteristicos = ["*"]
+let espaco = []
+
+for(let t = 0; t < n ; t ++){
+  espacos.push(" ")
+}
+
+
+for (let o = 0; o < m/2; o++){
+  console.log(espaco.join("")+asteristicos.join(""))
+  asteristicos.push("**")
+  espacos.pop()
+}
