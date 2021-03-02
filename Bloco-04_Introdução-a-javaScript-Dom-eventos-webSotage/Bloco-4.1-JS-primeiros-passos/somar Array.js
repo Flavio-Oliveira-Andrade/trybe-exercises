@@ -25,3 +25,17 @@ let numbers = [5, 9, 3, 19, 70, 8, 100, 2, 35, 27];
     }
     console.log(somaArray);
     console.log(somaArray/quantidade);
+
+
+    let quantNumber = 0;
+    let number = 0;
+    let we =[1 , 4 ,3 ,1 ]
+
+    for (let indice = 0 ; we.length==number; indice +=1){
+
+      console.log()
+    }
+
+
+
+
