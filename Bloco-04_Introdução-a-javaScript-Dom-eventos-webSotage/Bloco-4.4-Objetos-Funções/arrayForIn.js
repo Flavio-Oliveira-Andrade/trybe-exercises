@@ -15,7 +15,7 @@ let cars = ['saab','volvo', 'bmw'];
   function joga6(){
     let number =[]
     for(let index = 0; index < 6 ; index+=1){
-    number.push(numeroJogados(60));
+    number.push(numeroJogados());
     }
     return number;
   }
