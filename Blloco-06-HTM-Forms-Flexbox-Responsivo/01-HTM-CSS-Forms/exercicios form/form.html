@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Formulario de cadastro Tryber</h1>
+    <nav>
+      <ul>
+        <li>home</li>
+        <li>contatos</li>
+        <li>fale conosco</li>
+        <li>serviços</li>
+      </ul>
+    </nav>
+  </header>
+
+  <div id="diccontainer">
+  <form action="url" method="get">
+    <fieldset>
+      <legend>Cadastro</legend>
+      <label for=""> Nome <input type="text" name="" placeholder="Digite seu nome " maxlength="40" required></label>
+      <label for=""> E-mail <input type="text" name="" placeholder="Digite seu e-mail " maxlength="50" required></label>
+      <label for=""> CPF <input type="text" id="" required name="" placeholder="digit seu cpf " maxlength="11"></label>
+    </fieldset>
+    <fieldset id="">
+      <legend>Endereço</legend>
+      <label for="" id=""> Cidade <input type="text" name="" id="" required placeholder="Digite sua Cidade" maxlength="20"></label>
+      <label for="" id="">estatos</label>
+        <select name="" id="">
+          <option value="RJ">Rio de Janeiro</option>
+          <option value="SP">Sao Paulo</option>
+          <option value="Rs">Rio Grande do Sul</option>
+        </select>
+      </fieldset>
+      <fieldset>
+        <legend>Tipo de Moradia</legend>
+        <input type="radio" id="tipoMoradia" name="moradia" value="Casa" checked><label for="tipoMoradia">Casa </label>
+        <input type="radio" id="tipoMoradia" name='moradia' value="Apartamento"><label for="tipoMoradia">Apartamento   </label>
+        <input type="radio" id="tipoMoradia" name="moradia"value="Sitio">  </label><label for="tipoMoradia">Sitio
+      </fieldset>
+    </form>
+  </div>
+<script src="script.js"></script>
+</body>
+</html>
