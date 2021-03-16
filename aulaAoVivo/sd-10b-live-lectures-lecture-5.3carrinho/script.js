@@ -1,0 +1,41 @@
+window.onload = function () {
+  let button = document.getElementById('start-race-btn');
+  let car1 = document.querySelector('.car1');
+  let car2 = document.querySelector('.car2');
+  let car3 = document.querySelector('.car3');
+
+  car1.style.marginLeft = '0px';
+  car2.style.marginLeft = '0px';
+  car3.style.marginLeft = '0px';
+
+  //1. qual o tipo do evento devo escutar?
+  //2. o que eu faço quando esse evento acontecer?
+  button.addEventListener('click', function () {
+    car1.style.marginLeft = parseInt(car1.style.marginLeft) + (Math.random() * 100) + 'px';
+    car2.style.marginLeft = parseInt(car2.style.marginLeft) + (Math.random() * 100) + 'px';
+    car3.style.marginLeft = parseInt(car3.style.marginLeft) + (Math.random() * 100) + 'px';
+
+    if (parseInt(car1.style.marginLeft) > window.innerWidth) {
+      alert('Carro VERMELHO ganhou!');
+      resetCars(car1, car2, car3);
+    }
+
+    if (parseInt(car2.style.marginLeft) > window.innerWidth) {
+      alert('Carro VERDE ganhou!');
+      resetCars(car1, car2, car3);
+    }
+
+    if (parseInt(car3.style.marginLeft) > window.innerWidth) {
+      alert('Carro AMARELO ganhou!');
+      resetCars(car1, car2, car3);
+    }
+
+
+  });
+};
+
+function resetCars(car1, car2 , car3) {
+  car1.style.marginLeft = '0px';
+  car2.style.marginLeft = '0px';
+  car3.style.marginLeft = '0px';
+}
