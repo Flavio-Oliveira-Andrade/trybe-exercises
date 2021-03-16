@@ -1,26 +1,27 @@
-let estados = [Acre, Alagoas, Amapá, Amazonas, Bahia,Ceará, DistritoFederal, EspíritoSanto, Goiás, Maranhão]
-let sigla = [AC, AL, AP, AM, BA, CE, DF, ES, GO, MA];
+let estados = ['Acre', 'Alagoas', 'Amapá', 'Amazonas', 'Bahia','Ceará', 'DistritoFederal', 'EspíritoSanto', 'Goiás', 'Maranhão', 'MatoGrosso', 'MatoGrossoDoSul', 'MinasGerais', 'Pará', 'Paraíba', 'Paraná', 'Pernambuco', 'Piauí', 'RioDeJaneiro', 'RioGrandeDoNorte', 'RioGrandeDoSul', 'Rondônia', 'Roraima', 'SantaCatarina', 'SaoPaulo', 'Sergipe', 'Tocantins'];
+
+let sigla = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
 
 
-Ceará (CE)
-Distrito Federal (DF)
-Espírito Santo (ES)
-Goiás (GO)
-Maranhão (MA)
-Mato Grosso (MT)
-Mato Grosso do Sul (MS)
-Minas Gerais (MG)
-Pará (PA)
-Paraíba (PB)
-Paraná (PR)
-Pernambuco (PE)
-Piauí (PI)
-Rio de Janeiro (RJ)
-Rio Grande do Norte (RN)
-Rio Grande do Sul (RS)
-Rondônia (RO)
-Roraima (RR)
-Santa Catarina (SC)
-São Paulo (SP)
-Sergipe (SE)
-Tocantins (TO)
+
+function createElementOptionEstate(){
+  let getElementOptions = document.querySelector('#station');
+    for (let i = 0; i < estados.length; i += 1){
+      let elementEstado = estados[i];
+      let elementoption = document.createElement('option');
+        elementoption.innerHTML = elementEstado;
+        elementoption.value = sigla[i]
+          getElementOptions.appendChild(elementoption);
+
+  }
+
+}
+createElementOptionEstate();
+
+
+
+// function createElementOptionEstate(){
+//   let getElementOptions = document.querySelector('#station');
+//   for (i = 0; i <= estados.length; i++) {
+//     $('select').append(`<option>${estados[i]}</option>`);
+//   }
