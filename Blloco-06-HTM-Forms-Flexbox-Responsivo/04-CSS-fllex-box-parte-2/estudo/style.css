@@ -1,0 +1,127 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Ubuntu';
+}
+
+body {
+  background-color: rgb(247, 247, 247);
+}
+
+.header-container {
+  background-color: #5C687C;
+  display: flex;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+}
+
+.menu-container {
+  display: flex;
+}
+
+.menu-container ul {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.menu-container li {
+  color: white;
+  font-weight: 500;
+  font-size: 1.3rem;
+  list-style: none;
+  margin-right: 10px;
+}
+
+.main-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.movie-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-container h2 {
+  margin: 40px 0;
+  text-align: center;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.card-container div {
+  align-items: center;
+  background-color: #5C687C;
+  border: black solid 1px;
+  display: flex;
+  height: 150px;
+  justify-content: center;
+  margin: 10px;
+}
+
+.aside-container {
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+}
+
+.aside-container h3, h4 {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.aside-container p {
+  margin: 10px 0;
+  text-align: justify;
+}
+/*
+Os elementos presentes em um Flex container
+são chamados de Flex items . O Flexbox possui propiedades que impactam diretamente
+alingn-self =
+alingn-start
+flex-end
+stretch
+baseline, center
+
+propiedade: orde;
+Flexbox -Ordenação dos Itens
+flex-flow ; row (itens em linha ) wrap (nao deixa quebrar a linha)
+justify-content: space-between;
+.box: nth-child()  isso significa que podemos colocar e elementos dentro parametro () coloco numero filho que quero pegar
+order :1
+a propriedade flex-shrink surge para garantir o quanto um item será comprimido em comparação aos demais.
+Por fim, flex-grow define o quanto de espaço vago será ocupado por um item.
+
+por padrao os elementos de uma div container tem :
+flex grow 0
+flex-shrink 1
+flex basis auto
+
+* JSON
+(javaScript Object Notaion)
+
+Subcontainer, subItens e margin
+
+$ git checkout -b exercises/html-e-css-forms-flexbox-e-responsivo.4
+$ mkdir -p exercises/html-e-css-forms-flexbox-e-responsivo_4
+$ cd exercises/html-e-css-forms-flexbox-e-responsivo_4
+$ pwd
+<path_to_your_repo>/exercises/html-e-css-forms-flexbox-e-responsivo_4
+$ git status
+$ git log
+$ git push -u origin exercises/html-e-css-forms-flexbox-e-responsivo.4
+$ git push origin exercises/html-e-css-forms-flexbox-e-responsivo.4
+
+
+
+
+*/
