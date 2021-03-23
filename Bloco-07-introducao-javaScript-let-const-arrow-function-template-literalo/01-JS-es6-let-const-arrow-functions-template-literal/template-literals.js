@@ -46,3 +46,4 @@ console.log(trueExpression);
 
 const trueExpression2 = (1 + 1 === 3 ) ? 'true' : 'false';
 console.log(trueExpression2);
+
