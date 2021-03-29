@@ -1,0 +1,17 @@
+JavaScript em higher order functions  HOF
+conceito de Clean Code que é bastante utilizado no mercado
+mundo de funções de ordem superior
+ função nominal = tradicional
+ função anonima // função sem nome
+ função arrow function = pode adicionala a uma conatnte
+ podemos trabalhar com parametros  (paramentro )
+ tipos de paratemtros = tru ou false ; string, number , object, array, undefinid, função
+ HOF = recebe outra função como paramentro, função de ordem superior
+ addEventListener ?('click === evento' function) um belo exemplo =
+ type === tipo de evento que voce esta esperando
+ callback = função que é chamada de outra função para ser executada,
+ callback é passado por parametros para ser executada por outra function
+ exemplo  filho.obedecermae(tarefasQueMaePassou)
+
+
+

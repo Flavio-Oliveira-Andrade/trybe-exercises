@@ -1,0 +1,1 @@
+//sort = ordenar = em ordem crescente strings
