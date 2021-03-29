@@ -4,7 +4,7 @@ const person = {
 };
 
 const greeting = (person) => {
-  console.log (`ola ${person.name}, como vai voce`);
+  console.log (`ola ${person.name} ${person.lastName}, como vai voce`);
 };
 
 greeting(person);

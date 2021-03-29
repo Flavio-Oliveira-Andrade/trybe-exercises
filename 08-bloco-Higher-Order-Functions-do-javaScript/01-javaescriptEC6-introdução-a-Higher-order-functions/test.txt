@@ -12,6 +12,9 @@ mundo de funções de ordem superior
  callback = função que é chamada de outra função para ser executada,
  callback é passado por parametros para ser executada por outra function
  exemplo  filho.obedecermae(tarefasQueMaePassou)
+ currying = basicament informar  os paramentros de forma parcial de varias  funções por paramentro
+ cupom de desconto num site , ela custa 10 reais ,depende do cupum de desconto pra o calculo final
+ isso é um exemplo de descontos passado por paramentros
 
 
 
