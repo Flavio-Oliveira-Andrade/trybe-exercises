@@ -1,0 +1,26 @@
+eddEventListener = type === click { highlight botao ou link, executa som de um click}// mais o  menos assim
+callback =  significa um função passada por paramentro para outra funçao ordem superrior
+a função é passada para função pai sem os paramentros , pois ela sera chamada pela função partir
+
+forEach = ele apenas pecorre os elementos do array sem return,
+
+find  = retorna o primeiro elemeto que atenda a regra de negocio, (find = procurar), ele retorna primeiro elemento que satisfaça
+predicate = é uma qualidade do sujeito ao qual se refere;  //   find tem return . dica pode ser declarad uma const
+
+some =  ele retorna elemento que satisfaça a regra .
+same . faça um algoritimo que verifica se  existe alguma pessoa que nao saiba dirigir
+same vai pecorre e verificar se é trur ou false . se alguma pessoa nao dirigir true e sabe false como return,
+
+sort()  ele ordena um array de strings letras,
+agora para numeros ele precisa de uma function
+
+HOF  função de ordem superior
+
+filter() = retornum array  com o proposito regra de negocio .
+
+map() = array . ele transfoma o retono desse array ,com cada item trasnformado pela regra de negocio ,
+
+linux
+rm –rf "nome da pasta"  para apagar o diretorio e todos o seu conteudo
+
+
