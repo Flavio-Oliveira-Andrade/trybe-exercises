@@ -22,5 +22,5 @@ map() = array . ele transfoma o retono desse array ,com cada item trasnformado p
 
 linux
 rm –rf "nome da pasta"  para apagar o diretorio e todos o seu conteudo
-
+Pode utilizar o rm -r <diretorio> ou rm -rf <diretorio>
 
