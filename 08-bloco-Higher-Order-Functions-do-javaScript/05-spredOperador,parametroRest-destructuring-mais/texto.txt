@@ -1,0 +1,30 @@
+01 spred operator
+02 parãmetro rest
+03 object destructuring
+04 array destructuring
+05 defult destructuring
+06 abreviation objetct  literal
+07 defult params
+
+aplicar operador spread
+aplicar corretamente perâmetros rest
+aplicar corretamente object destructuring
+aplicar corretamente array destructuring
+aplicar corretamente defult  destructuring
+aplicar corretamente abreviation objetct literal
+aplicar corretamente defult params
+
+por que isso é importante
+
+como vimos no ecma6 introduziu features que contribuim para melhora a ecrita do seu codigo. hoje vamos aprender
+mais alguns recursos que voce definitivamente vai querer ter na sua caixa de ferramentas a
+saber usa-las  te ajudara a escrever codigos mais concisos e limpos .  facilmente a compreenção de que for
+le-los futuramente . object destructuring . por exemplo é muito util na hora de realizaar uma tarefa recorrente de
+desenvolverdor ; selecionar certos camos vindo da resposta de uma API . com object destructuring , você cansegue declaramente
+realizar essa tarefa , deixando seu codigo mais legivel
+
+como voce faria para colocar elementos num array , certam,ente pelo Push()
+
+
+
+

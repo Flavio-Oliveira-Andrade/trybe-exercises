@@ -60,16 +60,22 @@ const books = [
       birthYear: 1890,
     },
     releaseYear: 1928,
-  }
+  },
 ];
 
-const expectedResult = false;
+const expectedResult = [
+  'As Crônicas de Gelo e Fogo - Fantasia - George R. R. Martin',
+  'O Senhor dos Anéis - Fantasia - J. R. R. Tolkien',
+  'Fundação - Ficção Científica - Isaac Asimov',
+  'Duna - Ficção Científica - Frank Herbert',
+  'A Coisa - Terror - Stephen King',
+  'O Chamado de Cthulhu - Terror - H. P. Lovecraft',
+];
 
-function everyoneWasBornOnSecXX() {
- return books.every((value) => {
-    value.author.birthYear > 1900 && value.author.birthYear <= 2000
-  })
+function formatedBookNames() {
+  return books.map((book) => `${book.name} - ${book.genre} - ${book.author.name}`)
   // escreva seu código aqui
 }
-console.log(everyoneWasBornOnSecXX())
-assert.strictEqual(everyoneWasBornOnSecXX(), expectedResult);
+
+
+assert.deepStrictEqual(formatedBookNames(), expectedResult);

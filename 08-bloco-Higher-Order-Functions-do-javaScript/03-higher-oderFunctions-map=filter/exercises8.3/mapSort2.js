@@ -60,16 +60,45 @@ const books = [
       birthYear: 1890,
     },
     releaseYear: 1928,
-  }
+  },
 ];
 
-const expectedResult = false;
+const expectedResult = [
+  {
+    age: 31,
+    author: 'Isaac Asimov',
+  },
+  {
+    age: 38,
+    author: 'H. P. Lovecraft',
+  },
+  {
+    age: 39,
+    author: 'Stephen King',
+  },
+  {
+    age: 43,
+    author: 'George R. R. Martin',
+  },
+  {
+    age: 45,
+    author: 'Frank Herbert',
+  },
+  {
+    age: 62,
+    author: 'J. R. R. Tolkien',
+  },
+];
 
-function everyoneWasBornOnSecXX() {
- return books.every((value) => {
-    value.author.birthYear > 1900 && value.author.birthYear <= 2000
-  })
-  // escreva seu código aqui
+function nameAndAge() {
+  return books.map((book)=>({
+    age: book.releaseYear - book.author.birthYear,
+    author: book.author.name
+  })).sort((a, b) => a.age - b.age);
 }
-console.log(everyoneWasBornOnSecXX())
-assert.strictEqual(everyoneWasBornOnSecXX(), expectedResult);
+
+
+
+
+assert.deepStrictEqual(nameAndAge(), expectedResult);
+

@@ -60,16 +60,24 @@ const books = [
       birthYear: 1890,
     },
     releaseYear: 1928,
-  }
+  },
 ];
 
-const expectedResult = false;
+const expectedResult = [
+  'Frank Herbert',
+  'George R. R. Martin',
+  'Isaac Asimov',
+  'J. R. R. Tolkien',
+];
+//Crie um array em ordem alfabética apenas com os nomes de todas as pessoas autoras de ficção científica ou fantasia.
 
-function everyoneWasBornOnSecXX() {
- return books.every((value) => {
-    value.author.birthYear > 1900 && value.author.birthYear <= 2000
-  })
+function fantasyOrScienceFictionAuthors() {
   // escreva seu código aqui
+
+    const wantedGenres = ['Fantasia', 'Ficção Científica'];
+    return books
+      .filter((book) => wantedGenres.includes(book.genre)) // tive ajuda do gabirito , compreendir bem
+      .map((book) => book.author.name).sort();
 }
-console.log(everyoneWasBornOnSecXX())
-assert.strictEqual(everyoneWasBornOnSecXX(), expectedResult);
+
+ assert.deepStrictEqual(fantasyOrScienceFictionAuthors(), expectedResult);

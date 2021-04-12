@@ -1,0 +1,39 @@
+$ git checkout -b exercises/introducao-a-javascript-es6-e-testes-unitarios.1
+
+
+$ mkdir -p exercises/introducao-a-javascript-es6-e-testes-unitarios_1
+$ cd exercises/introducao-a-javascript-es6-e-testes-unitarios_1
+$ pwd
+<path_to_your_repo>/exercises/introducao-a-javascript-es6-e-testes-unitarios_1
+
+$ git status
+On branch exercises/introducao-a-javascript-es6-e-testes-unitarios.1
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+  modified:   exercise_1.html
+
+  $ git log
+commit 100c5ca0d64e2b8649f48edf3be13588a77b8fa4 (HEAD -> exercises/introducao-a-javascript-es6-e-testes-unitarios.1)
+Author: Tryber Bot <tryberbot@betrybe.com>
+Date:   Fry Sep 27 17:48:01 2019 -0300
+
+    Exercicio 2 - mudando o evento de click para mouseover, tirei o alert e coloquei pra quando clicar aparecer uma imagem do lado direito da tela
+
+commit c0701d91274c2ac8a29b9a7fbe4302accacf3c78
+Author: Tryber Bot <tryberbot@betrybe.com>
+Date:   Fry Sep 27 16:47:21 2019 -0300
+
+    Exercicio 2 - adicionando um alert, usando função e o evento click
+
+commit 6835287c44e9ac9cdd459003a7a6b1b1a7700157
+Author: Tryber Bot <tryberbot@betrybe.com>
+Date:   Fry Sep 27 15:46:32 2019 -0300
+
+    Resolvendo o exercício 1 usando eventListener
+
+    $ git push -u origin exercises/introducao-a-javascript-es6-e-testes-unitarios.1
+
+$ git push origin exercises/introducao-a-javascript-es6-e-testes-unitarios.1
+

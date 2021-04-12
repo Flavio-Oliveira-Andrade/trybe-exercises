@@ -1,3 +1,6 @@
+// Faça uma função que retorne true ,
+// caso nenhum author tenha nascido no mesmo ano, e false , caso contrário.
+
 const assert = require('assert');
 
 const books = [
@@ -57,19 +60,24 @@ const books = [
     genre: 'Terror',
     author: {
       name: 'H. P. Lovecraft',
-      birthYear: 1890,
+      birthYear: 1947,
     },
     releaseYear: 1928,
-  }
+  },
 ];
 
 const expectedResult = false;
 
-function everyoneWasBornOnSecXX() {
- return books.every((value) => {
-    value.author.birthYear > 1900 && value.author.birthYear <= 2000
-  })
+// function authorUnique() {
   // escreva seu código aqui
+  // return false
+
+function authorUnique() {
+  return books.every((book) =>
+    !books.some((bookSome) =>
+      (bookSome.author.birthYear === book.author.birthYear)
+      && (bookSome.author.name !== book.author.name)));
+
 }
-console.log(everyoneWasBornOnSecXX())
-assert.strictEqual(everyoneWasBornOnSecXX(), expectedResult);
+console.log(authorUnique())
+assert.strictEqual(authorUnique(), expectedResult);

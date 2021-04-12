@@ -1,0 +1,1 @@
+//spread  ou [rest paramentros de função ]  ...rest ...spread
