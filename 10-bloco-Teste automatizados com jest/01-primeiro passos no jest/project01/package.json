@@ -7,7 +7,7 @@
     "test": "jest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Flavio-Oliveira",
   "license": "ISC",
   "dependencies": {
     "dev": "^0.1.3",
