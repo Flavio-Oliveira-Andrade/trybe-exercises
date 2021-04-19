@@ -1,0 +1,24 @@
+{
+  "name": "sd-010-b-dojo-countries-api",
+  "version": "1.0.0",
+  "description": "Esse repositório contém a descrição do exercício prático para a Turma 10! Faremos um [Dojo](https://pt.wikipedia.org/wiki/Coding_Dojo) para que esse exercício seja resolvido em grupos.",
+  "main": "script.js",
+  "devDependencies": {
+    "eslint": "^7.24.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tryber/sd-010-b-dojo-countries-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tryber/sd-010-b-dojo-countries-api/issues"
+  },
+  "homepage": "https://github.com/tryber/sd-010-b-dojo-countries-api#readme"
+}

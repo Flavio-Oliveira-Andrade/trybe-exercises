@@ -1,0 +1,87 @@
+O que é um retorno de chamada?
+Simplificando: Um retorno de chamada é uma função que deve ser executada após a conclusão de outra função - daí o nome 'retorno de chamada'.
+Colocado de forma mais complexa: em JavaScript, funções são objetos. Por causa disso, as funções podem ter funções como argumentos e podem ser retornadas por outras funções. As funções que fazem isso são chamadas de funções de ordem superior . Qualquer função passada como argumento é chamada de função de retorno de chamada .
+
+Por que precisamos de Callbacks?
+Por uma razão muito importante - JavaScript é uma linguagem orientada a eventos. Isso significa que, em vez de esperar por uma resposta antes de prosseguir, o JavaScript continuará em execução enquanto escuta outros eventos. Vejamos um exemplo básico:
+função primeiro () {
+  console.log (1);
+}
+função segundo () {
+  console.log (2);
+}
+primeiro();
+segundo();
+Como seria de esperar, a função firsté executada primeiro e a função secondé executada em segundo - registrando o seguinte no console:
+// 1
+// 2
+
+Tudo bem até agora.
+Mas e se a função firstcontiver algum tipo de código que não pode ser executado imediatamente? Por exemplo, uma solicitação de API para a qual devemos enviar a solicitação e esperar uma resposta? Para simular essa ação, íamos usar setTimeoutuma função JavaScript que chama uma função após um determinado período de tempo. Vamos atrasar nossa função por 500 milissegundos para simular uma solicitação de API. Nosso novo código será parecido com este:
+function first () {
+  // Simula um atraso de código
+  setTimeout (function () {
+    console.log (1);
+  }, 500);
+}
+função segundo () {
+  console.log (2);
+}
+primeiro();
+segundo();
+
+Não é importante que você entenda como setTimeout()funciona agora. Tudo o que importa é que você vê que mudamos nosso console.log(1);atraso de 500 milissegundos. Então, o que acontece agora quando invocamos nossas funções?
+primeiro();
+segundo();
+// 2
+// 1
+
+Embora invocemos a first()função primeiro, desconectamos o resultado dessa função depois da second()função.
+Não é que o JavaScript não executou nossas funções na ordem que queríamos; em vez disso, o JavaScript não esperou por uma resposta first()antes de prosseguir para a execução second().
+Então, por que mostrar isso a você? Porque você não pode simplesmente chamar uma função após a outra e esperar que sejam executadas na ordem certa.Retornos de chamada são uma forma de garantir que determinado código não seja executado até que outro código já tenha concluído a execução.
+Crie um retorno de chamada
+Tudo bem, chega de conversa, vamos criar um retorno de chamada!
+Primeiro, abra o Console do desenvolvedor do Chrome ( Windows: Ctrl + Shift + J ) ( Mac: Cmd + Option + J ) e digite a seguinte declaração de função em seu console:
+function doHomework (subject) {
+  alert (`Iniciando meu $ {subject} homework`);
+}
+Acima, criamos a função doHomework. Nossa função assume uma variável, o assunto no qual estamos trabalhando. Chame sua função digitando o seguinte em seu console:
+doHomework ('matemática');
+// Alertas: Iniciando meu dever de matemática.
+Agora vamos adicionar nosso retorno de chamada - como nosso último parâmetro na doHomework()função, podemos passar callback. A função de retorno de chamada é então definida no segundo argumento de nossa chamada para doHomework().
+function doHomework (subject , callback ) {
+  alert (`Iniciando meu $ {subject} homework`);
+  ligue de volta();
+}
+
+doHomework ('math' , function () {
+  alert ('Concluí meu dever de casa');
+} );
+Como você verá, se digitar o código acima em seu console, você receberá dois alertas consecutivos: O alerta de 'lição de casa inicial', seguido pelo alerta de 'lição de casa concluída'.
+Mas as funções de retorno de chamada nem sempre precisam ser definidas em nossa chamada de função. Eles podem ser definidos em outro lugar em nosso código como este:
+function doHomework (subject, callback) {
+  alert (`Iniciando meu $ {subject} homework`);
+  ligue de volta();
+}
+function alertFinished () {
+  alert (' Concluí meu dever de casa');
+}
+doHomework ('matemática', alertFinished);
+O resultado deste exemplo é exatamente o mesmo do exemplo anterior, mas a configuração é um pouco diferente. Como você pode ver, passamos a alertFinisheddefinição da função como um argumento durante nossa doHomework()chamada de função!
+Um exemplo do mundo real
+Na semana passada, publiquei um artigo sobre como criar um bot do Twitter em 38 linhas de código . O único motivo pelo qual o código desse artigo funciona é a API do Twitters . Quando você faz solicitações a uma API, precisa esperar pela resposta antes de agir de acordo com essa resposta. Este é um exemplo maravilhoso de retorno de chamada do mundo real. Esta é a aparência da solicitação:
+T.get ('search / tweets', params, function (err, data, response) {
+  if (! Err) {
+    // Aqui é onde a mágica acontecerá
+  } else {
+    console.log (err);
+  }
+})
+T.get simplesmente significa que estamos fazendo uma solicitação get ao Twitter
+Existem três parâmetros nesta solicitação:, ‘search/tweets’que é a rota de nossa solicitação, paramsque são nossos parâmetros de pesquisa e, em seguida, uma função anônima que é nosso retorno de chamada.
+Um retorno de chamada é importante aqui porque precisamos esperar por uma resposta do servidor antes de prosseguirmos em nosso código. Não sabemos se nossa solicitação de API será bem-sucedida ou não depois de enviar nossos parâmetros para pesquisa / tweets por meio de uma solicitação get, esperamos. Assim que o Twitter responde, nossa função de retorno de chamada é invocada. O Twitter enviará um errobjeto (de erro) ou um responseobjeto de volta para nós. Em nossa função de retorno de chamada, podemos usar uma if()instrução para determinar se nossa solicitação foi bem-sucedida ou não e, em seguida, agir de acordo com os novos dados.
+Você conseguiu
+Bom trabalho! Agora você pode (idealmente) entender o que é um retorno de chamada e como funciona. Esta é apenas a ponta do iceberg com callbacks, ainda há muito mais para aprender! Eu publico alguns artigos / tutoriais a cada semana, por favor digite seu e-mail aqui se você gostaria de ser adicionado à minha lista de e-mail semanal.
+❤ Se esta postagem foi útil, por favor, acerte o coraçãozinho azul! E não se esqueça de verificar meus outros artigos recentes:
+Como testar JavaScript com Mocha: Parte 1 e Parte 2
+E quando você estiver pronto para realmente mergulhar no desenvolvimento da Web, confira os 5 melhores cursos para aprender o desenvolvimento da Web Full Stack
