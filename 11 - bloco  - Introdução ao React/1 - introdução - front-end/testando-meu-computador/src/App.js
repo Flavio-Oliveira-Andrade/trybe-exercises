@@ -3,6 +3,7 @@ import Header from './componentes/header'
 import Body from './componentes/body'
 import Footer from './componentes/footer'
 import Props from './componentes/props'
+import cla from './componentes/class'
 
 // exemplo export default function app() {}
 function App() {
@@ -15,6 +16,7 @@ function App() {
     <>
       <Header/>
       <Body/>
+      <cla/>
       <Footer/>
       <Props
         HTML= {html}

@@ -3,7 +3,9 @@ import Logo from '../logo.svg'
 
 function footer() {
   return (
-    <img src={Logo}/>
+    <>
+    <img src={ Logo } alt='logoReact'/>
+    </>
   )
 }
 

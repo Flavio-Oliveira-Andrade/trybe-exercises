@@ -1,0 +1,47 @@
+// import React from 'react'
+
+// function tick() {
+//   return (
+//     <div>
+//       <h1>Hello, world!</h1>
+//       <h2>It is {new Date().toLocaleTimeString()}.</h2>
+//     </div>
+//   );
+//   //ReactDOM.render(element, document.getElementById('root'));
+//   //setInterval(tick, 1000)
+// }
+
+// export default tick;
+
+
+// function tick() {
+//   const element = (
+//     <div>
+//       <h1>Hello, world!</h1>
+//       <h2>It is {new Date().toLocaleTimeString()}.</h2>
+//     </div>
+//   );
+//   ReactDOM.render(element, document.getElementById('root'));
+// }
+
+// setInterval(tick, 1000);
+
+/* App.css */
+// .App {
+//   background-color: #282c34;
+//   text-align: center;
+// }
+
+// // App.js
+// import React from 'react';
+// import './App.css';
+
+// function App() {
+//   return (
+//     <div className='App'>
+//       <h1>APP</h1>
+//     </div>
+//   );
+// }
+
+// export default App;
