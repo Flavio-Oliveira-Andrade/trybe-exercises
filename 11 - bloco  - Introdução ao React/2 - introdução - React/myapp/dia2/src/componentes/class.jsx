@@ -1,0 +1,10 @@
+import React from 'react';
+
+export default function Button() {
+  return (
+    <div>
+      <h1> Flavio Oliveira </h1>
+      <button>Click me</button>
+    </div>
+  );
+}
