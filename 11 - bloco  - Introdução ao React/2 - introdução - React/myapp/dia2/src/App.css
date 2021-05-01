@@ -1,11 +1,18 @@
 .App {
   text-align: center;
+
 }
 h1 {
   text-align: center;
 }
 
-button{
+body {
+  margin-left: 20px;
+}
+
+button, input{
+  padding: 10px;
+  margin-bottom: 10px;
   display: flex;
   margin: auto;
 }

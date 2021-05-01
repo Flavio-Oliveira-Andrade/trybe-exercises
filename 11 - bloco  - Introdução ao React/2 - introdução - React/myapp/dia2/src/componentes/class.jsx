@@ -2,9 +2,12 @@ import React from 'react';
 
 export default function Button() {
   return (
-    <div>
+    <div className='teste'>
+      const nome = 'Flavito'
       <h1> Flavio Oliveira </h1>
-      <button>Click me</button>
+      <input type='text' placeholder='Digite Aqui'/>
+      <br/>
+      <button>Click Me</button>
     </div>
   );
 }
