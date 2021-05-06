@@ -7,6 +7,12 @@ import React from 'react';
 function handleClick() {
   console.log('clicou')
 }
+function handleClick1() {
+  console.log('clicou1')
+}
+function handleClick2() {
+  console.log('clicou2')
+}
 
 class App extends React.Component{
    /* Repare que, diferentemente do HTML, no
@@ -15,7 +21,11 @@ class App extends React.Component{
   render() {
 
     return (
-     <button onClick={handleClick}> carrinho </button>
+      <div>
+        <button onClick={handleClick}> carrinho </button>
+        <button onClick={handleClick1}> carrinho1 </button>
+        <button onClick={handleClick2}> carrinho2 </button>
+     </div>
     )
   }
 
