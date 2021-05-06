@@ -7,13 +7,25 @@ class App extends React.Component{
    /* Repare que, diferentemente do HTML, no
   JSX você associa uma função a um evento
   passando a própria função entre chaves `{}` */
+  constructor() {
+    super()
+
+    this.handleClick = this.handleClick.bind(this)
+    this.handleClick1 = this.handleClick1.bind(this)
+    this.handleClick2 = this.handleClick2.bind(this)
+
+  }
+
   handleClick() {
+    console.log(this)
     console.log('clicou')
   }
   handleClick1() {
+    console.log(this)
     console.log('clicou1')
   }
   handleClick2() {
+    console.log(this)
     console.log('clicou2')
   }
   render() {
