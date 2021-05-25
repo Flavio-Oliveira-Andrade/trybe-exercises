@@ -2,13 +2,20 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 
 
 import App from './App';
 
 // Adicione esse teste.
 test('Verificando se o botão e o campo email estão funcionando.', () => {
+  // descontruo {     }  o selector do metodo render
   const { getByTestId, getByLabelText } = render(<App />);
+  //uso o seletor para verificar o que condiz com o seletor do
+  const input = getByLabelText('Email')
+  // faço a verificação se existe
+  expect(input).toBeInTheDocument();
+  expect(input.type).toBe('email');
 
   const EMAIL_USER = 'email@email.com';
 
@@ -24,13 +31,24 @@ test('Verificando se o botão e o campo email estão funcionando.', () => {
   expect(textEmail).toHaveTextContent(`Valor: ${EMAIL_USER}`);
 });
 
+test('verifica se ha 2  botao', ()=>{
+  const { getAllByRole } = render(<App />)
+  const button = getAllByRole('button')
+
+  expect(button.length).toBe(2)
+})
+
 describe("Testa pagina Appp e", ()=> {
   test("verifica se a pagina é renderizada", ()=> {
-    <Router history={history}>
+    const history = createMemoryHistory();
+    <Router history={ history }>
       render(<App/>);
     </Router>
 
-    const
+    const about = screen.getInTheDocuments();
   })
 })
+
+// testa  campo de email  boatao enviar , input
+
 
