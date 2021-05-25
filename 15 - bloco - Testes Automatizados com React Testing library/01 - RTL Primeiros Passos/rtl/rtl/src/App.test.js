@@ -46,6 +46,7 @@ describe("Testa pagina Appp e", ()=> {
     </Router>
 
     const about = screen.getInTheDocuments();
+    console.log(about)
   })
 })
 
