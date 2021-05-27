@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    const actionCreator = () => action;
+    store.dispatch(loginAction());
+
+    switch (action.type){
+      case 'LOGIN' :
+        return { login:true };
+      default:
+        return state
+    }
+
+    switch (action.type) {
+      case 'LOGIN':
+        return { autthenticated: true };
+      case 'LOGOUT':
+        return { autenticas: false };
+      default:
+        return stat;
+    }
+
+    const LOGIN = 'LOGIN';
+    const LOGOUT = 'LOGOUT';
+
+    const defaultState = {
+      authenticated: false,
+    }
+
+    const authReducer = (state, defaultState, action) => {
+      switch (action.type){
+        case LOGIN:
+          return { authenticated: true}
+        case LOGOUT:
+          return { authenticated: false}
+        default:
+          return state
+      }
+    }
+
+    const store = Redux.createStore(authReducer)
+
+    const loginUser = () => {
+      return { type: LOGIN,}
+    }
+
+    const logoutUser = () => {
+      return {type: LOGOUT,}
+    }
+
+    // 06
+
+    const ADD = 'ADD';
+
+    const reducer = (state = 0, action) => {
+      switch (action.type){
+        case ADD:
+          return state + 1
+        default:
+          return state
+      }
+    }
+    const store = Redux.createStore(reducer);
+
+    let count = 0;
+
+    store.subscribe( ()=> {count += 1})
+
+    store.dispatch({type: ADD });
+
+    // 7 combina reducer
+
+    const INCREMENT = 'INCREMENT';
+    const DECREMENT = 'DECREMENT';
+
+    const counterReducer = (state = 0, action) => {
+      switch(action.type){
+        case INCREMENT:
+          return state + 1;
+        case DECREMENT:
+          return state - 1;
+        default:
+          return state;
+      }
+    }
+
+    const LOGIN = 'LOGIN';
+    const LOGOUT = 'LOGOUT';
+
+    const authReducer = (state = { authenticated: false }, action) => {
+      switch (action.type){
+        case LOGIN:
+          return { authenticated: true };
+        case LOGOUT:
+          return { authenticated: false };
+        default:
+          return state;
+      }
+    }
+
+    const rootReducer = Redux.combinaReducer({
+      count: counterReducer,
+      auth: authReducer
+    })
+
+    const store = Redux.createStore(rootReducer);
+
+    // 8
+    const ADD_NOTE = 'ADD_NOTE';
+
+    const notesReducer = (state = 'initial state', action) => {
+      switch( action.type ){
+        case ADD_NOTE:
+          return action.text;
+        default:
+          return state;
+      }
+    }
+
+    const addNoteText = (note) => {
+      return {
+        type: ADD_NOTE,
+        text: note
+      }
+    }
+    const store = Redux.createStore(notesReducer);
+
+    console.log(store.getState());
+    store.dispatch(addNoteText('Hello!'));
+    console.log(store.getState());
+
+    // 9
+
+    const INCREMENT = 'INCREMENT';
+    const DECREMENT = 'DECREMENT';
+
+    const countReducer = (state = 0, action) => {
+      switch(action.type) {
+        case INCREMENT:
+          return state + 1;
+        case DECREMENT:
+          return state - 1;
+        default:
+          return state
+      }
+    }
+    const store = Redux.createStore(coutRedux)
+
+    const inAction =() => ({
+      type: INCREMENT,
+    })
+
+    const decAction =() => ({
+      type: DECREMENT,
+    })
+
+    // 10
+    const ADD_TO_DO = 'ADD_TO_DO';
+
+    const todos = [
+      'Go to the store',
+      'clean the house',
+      'Cook drink',
+      'Learn to code',
+    ];
+
+    const imultableReducer = (state = todos, action) => {
+      switch(action.type){
+        case ADD_TO_DO:
+          return [...todos, action.todos];
+        default:
+          return state
+      }
+    }
+
+    const addToDo = (todo) => {
+      return ({
+        type: ADD_TO_DO,
+        todo,
+      })
+    }
+    const store = React.createStore(imultableReducer);
+
+    // 11
+    const ADD_TO_DO = 'ADD_TO_DO';
+    const immutableReducer = (state = ['Do not mutate state!'], action) => {
+    switch (action.type) {
+    case ADD_TO_DO:
+      return [...state, action.todo];
+    default:
+      return state;
+  }
+};
+
+const addToDo = (todo) => ({
+  type: ADD_TO_DO,
+  todo});
+
+const store = Redux.createStore(immutableReducer);
+
+  // 12
+  const imultableReducer = ( state = [0,1,2,3,4,5], action) => {
+    switch(action.type){
+      case 'REMOVE_ITEM':
+        return state.filter( (_number, index) => index !== action.index);
+      default:
+        return state;
+    }
+  };
+
+  const removeItem = (index) => ({
+    type: 'REMOVE_ITEM',
+    index,
+  })
+
+  const store = Redux.createStore(imultableReducer);
+
+  // 13
+  const OLINE = 'OLINE';
+  const defaultState = {
+    user: 'CamperBot',
+    status: 'offline',
+    friends: '732,982',
+    community: 'freeCodeCamp',
+  };
+
+  const immutableReducer = (state = defaultState, action) => {
+    switch(action.type){
+      case OLINE:
+        return object.assign({}, state, {
+          status: 'online'
+        })
+      default:
+        return state
+    }
+  }
+
+
+
+  </script>
+</body>
+</html>
