@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
 
 class SideBar extends Component {
   render() {
@@ -36,4 +37,12 @@ class SideBar extends Component {
   }
 }
 
-export default SideBar;
+const mapStateToProps = (state) => ({
+  categories: state.movies.categories
+
+})
+
+const mapDispatchToProps = ({
+
+})
+export default connect(mapStateToProps, mapDispatchToProps) (SideBar);
