@@ -5,19 +5,51 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      form: [],
+      nome: '',
+      email: '',
+      password: '',
+      movie:'',
     }
+    this.handleChange = this.handleChange.bind(this)
+  }
+
+  handleChange(event) {
+    this.setState({
+      [event.target.id]: event.target.value,
+
+    })
   }
   render() {
     return (
       <div className="App">
         <form>
-          <input type="text" placeholder="Nome" />
-          <input type="email" placeholder="E-mail" />
-          <input type="password" placeholder="Password" />
-          <input type="text" placeholder="Filme favorito" />
+          <input
+            type="text"
+            id="nome"
+            placeholder="Nome"
+            onChange={this.handleChange }
+          />
+          <input
+            type="email"
+            id="email"
+            placeholder="E-mail"
+            onChange={this.handleChange }
+          />
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            onChange={this.handleChange }
+          />
+          <input
+            type="text"
+            id="movie"
+            placeholder="Filme favorito"
+            onChange={this.handleChange }
+          />
           <button type="submit">Enviar</button>
         </form>
+        <p>{this.state.nome}</p>
       </div>
     );
   }
