@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Funcional from "./components/funcional";
 
 function App() {
   const [repositories, setRepositories] = useState([]);
@@ -35,6 +36,8 @@ function App() {
     <div>
         <div>{new Date().toLocaleTimeString()}</div>
         <div>{new Date().toLocaleDateString()}</div>
+        <div>{new Date().toLocaleString()}</div>
+        <Funcional />
       <ul>
         {repositories.map((rep) => (
           <li key={rep.id}>
