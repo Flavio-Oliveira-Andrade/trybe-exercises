@@ -25,6 +25,12 @@ function App() {
     setRepositories(newRepositories)
   }
 
+  useEffect(() =>{
+    const filtered = repositories.filter(rep => rep.favorite);
+    document.title = `Você tem ${filtered.length} Favoritos `;
+
+  },[repositories]);
+
   return (
     <div >
       <ul>
