@@ -32,19 +32,21 @@ function App() {
   },[repositories]);
 
   return (
-    <div >
+    <div>
+        <div>{new Date().toLocaleTimeString()}</div>
+        <div>{new Date().toLocaleDateString()}</div>
       <ul>
-        {repositories.map((rep) =>
-        <li key={rep.id}>
-          {rep.name}
-          {rep.favorite && <span>(favorito)</span>}
-         <button onClick={()=>handleFavorites(rep.id)}>
-           { !rep.favorite ? 'Favoritar' : 'Desfavoritar' }
-           </button></li>
-        )}
+        {repositories.map((rep) => (
+          <li key={rep.id}>
+            {rep.name}
+            {rep.favorite && <span>(favorito)</span>}
+            <button onClick={() => handleFavorites(rep.id)}>
+              {!rep.favorite ? "Favoritar" : "Desfavoritar"}
+            </button>
+          </li>
+        ))}
       </ul>
       {/* <button type="button" onClick={handleAddRepository}>Add</button> */}
-
     </div>
   );
 }
