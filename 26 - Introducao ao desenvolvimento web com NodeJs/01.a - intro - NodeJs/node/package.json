@@ -4,7 +4,7 @@
   "description": "Meu primeiro scrips NodeJs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --timeout 2000 --exit",
     "start": "node index.js",
     "meu-scripts": "node index.js"
   },
