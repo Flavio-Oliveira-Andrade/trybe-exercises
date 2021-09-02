@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 const valid =(req, res, next) => {
   const {username, email, password} = req.body
   const pattern = /^[^ ]+@[^ ]+.[a-z]{2,3}$/;
@@ -10,7 +12,12 @@ const valid =(req, res, next) => {
   next();
 };
 
+const generate = function() {
+  return crypto.randomBytes(10).toString('hex')
+}
+console.log(generate())
 
 module.exports = {
-  valid
+  valid,
+  generate,
 }
