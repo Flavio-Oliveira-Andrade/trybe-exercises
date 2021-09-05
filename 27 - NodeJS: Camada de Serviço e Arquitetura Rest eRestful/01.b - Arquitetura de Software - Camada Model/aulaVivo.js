@@ -1,0 +1,7 @@
+/*
+Camada Model
+responsavel por armazenar deletar atualizar
+
+Conectar Nossa API com o MySQL
+Conectar Nossa API com MongoDB
+*/
