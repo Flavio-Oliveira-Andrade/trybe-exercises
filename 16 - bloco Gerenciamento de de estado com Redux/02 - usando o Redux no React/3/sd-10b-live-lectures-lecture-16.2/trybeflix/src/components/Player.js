@@ -19,8 +19,8 @@ class Player extends React.Component {
         <section>
           <iframe
             title="trailer"
-            width="420"
-            height="315"
+            width="680"
+            height="385"
             src={ selectedMovie.link }
           />
         </section>

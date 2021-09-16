@@ -1,4 +1,5 @@
 import SELECT_MOVIE from '../actions'
+
 function selectMovie(movie, category){
   return{
     type: SELECT_MOVIE,

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Funcional from "./components/funcional";
+import Tasks from "./components/Tasks.";
+import PersonalProvider from "./provides/PersonalProvider";
 
 function App() {
   const [repositories, setRepositories] = useState([]);
@@ -49,7 +51,9 @@ function App() {
           </li>
         ))}
       </ul>
-      {/* <button type="button" onClick={handleAddRepository}>Add</button> */}
+      <PersonalProvider>
+        <Tasks />
+      </PersonalProvider>
     </div>
   );
 }

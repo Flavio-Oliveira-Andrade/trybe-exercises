@@ -4,7 +4,7 @@ import SELECT_MOVIE from '../actions' ;
 const INITIAL_STATE = {
   selectedMovies: {},
   selectedCategory: {},
-  categories: [categoriesData],
+  categories: categoriesData,
 }
 
 

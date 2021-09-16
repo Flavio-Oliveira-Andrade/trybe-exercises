@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
+import movieActions from '../redux/actions/movieActions'
 
 class SideBar extends Component {
   render() {
-    const { categories } = this.props;
+    const { categories, selectMovie } = this.props;
     return (
       <aside>
         {
@@ -21,7 +22,7 @@ class SideBar extends Component {
                       {movie.released}
                       <button
                         type="button"
-                        onClick={ () => {}}
+                        onClick={ () => selectMovie(category, movie) }
                       >
                         select
                       </button>
@@ -38,11 +39,14 @@ class SideBar extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  categories: state.movies.categories
+  categories: state.movies.categories,
 
 })
 
-const mapDispatchToProps = ({
+const mapDispatchToProps = (dispatch) => ({
+  selectMovie: (category, movie) => dispatch(
+    movieActions(movie, category),
+  )
 
 })
 export default connect(mapStateToProps, mapDispatchToProps) (SideBar);

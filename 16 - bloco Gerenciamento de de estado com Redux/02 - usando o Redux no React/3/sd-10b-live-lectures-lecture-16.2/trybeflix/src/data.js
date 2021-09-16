@@ -28,6 +28,7 @@ const categories = [
     movies: [
       { id: 7, title: 'O codigo', released: '2010  ', link: 'https://pluto.tv/on-demand/movies/safe-br-2012-1-1' },
       { id: 8, title: 'A Negociação', released: 2010, link: 'https://pluto.tv/on-demand/movies/arbitrage-br-2013-1-1' },
+      { id: 9, title: 'Terapia do Sexo', released: 2010, link: 'https://pluto.tv/on-demand/movies/terapia-do-sexo-2013-1-1' },
 
     ]
   }

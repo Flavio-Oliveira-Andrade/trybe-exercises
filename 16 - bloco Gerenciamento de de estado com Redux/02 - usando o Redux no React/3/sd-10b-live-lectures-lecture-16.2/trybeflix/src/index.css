@@ -17,7 +17,7 @@ code {
 main {
   display: flex;
   justify-content: space-between;
-  padding: 30px;
+  padding: 20px 30px;
 }
 
 .Header {
@@ -34,8 +34,8 @@ main {
 }
 
 .button{
-  background-color: rgb(190, 196, 115);
-  color: rgb(37, 32, 32);
+  background-color: rgb(92, 41, 37);
+  color: rgb(235, 206, 206);
   border: none;
   border-radius:50px;
   margin-left: 10px;

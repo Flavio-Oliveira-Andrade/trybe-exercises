@@ -1,33 +1,25 @@
+
 import React from 'react'
 import Header from './components/Header'
 import Player from './components/Player';
-import SideBar from './components/SideBar';
-import './App.css';
+import Sidebar from './components/SideBar';
+import './index.css';
 
-class App extends React.Component() {
-  constructor(props) {
-    super(props)
+import './index.css';
 
-    this.state = {
-      categories: categoriesDate,
-    }
-  }
-
-
-  render(){
-    return(
-      <div>
+class App extends React.Component {
+  render() {
+    return (
+      <>
         <Header />
-        <main>
-          <Player movie={ categories[0].movies[0] } />
-          <SideBar categories={ categories }/>
+        <main className="main">
+          <Player />
+          <Sidebar />
         </main>
-
-      </div>
-    )
+      </>
+    );
   }
 }
 
-
-
 export default App;
+
