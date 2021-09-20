@@ -18,7 +18,7 @@ const diskStorage = multer.diskStorage({
   },
 })
 
-const uploads = multer({ diskStorage })
+const uploads = multer({storage :diskStorage })
 
 // const uploads = multer({
 //   dest: 'uploads/'
