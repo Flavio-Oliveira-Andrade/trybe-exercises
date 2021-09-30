@@ -36,3 +36,16 @@ Exemplo de serviços em nuvens, Populares
 -  IBM claud.
 
 Nota: vale lembrar que cada serviços tem suas particularidades.
+
+## intgrodução ao Heroku.
+
+Para nosso primeiro deploy, vamos utilizar O heroku é  um PaaS (PlatForm as a Service), o que signica que ele provem de uma plataforma em nuvem para configurarmos e realizarmos nosso deploy de maneira simples e facil.
+
+O Heroku executa e gerencia aplicação escrita em Node.js, Ruby. java , Pyton, CLojure, Scala, Go e PHP. por ser uma plataforma "poliglota", ele vai se comporta de maneira similar, idepedente da linguagem.
+
+Para heroku, uma aplicação é um conjunto de codigos escritos em uma dessas linguagens citadas anteriormente, provalvelmente utilizando um framework, com algumas depedencias e descrição que idican como roda-la
+
+Um termo importante para ter na ponta da língua é build . No contexto de deploys , o build é como chamamos todo o processo em que o código é preparado para posteriormente ser executado. Por exemplo, é durante o build que se executa o npm install para instalar as dependências do projeto.
+
+### Como funciona ?
+
