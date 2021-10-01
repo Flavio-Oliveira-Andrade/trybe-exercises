@@ -195,6 +195,35 @@ Utilize a sintaxe `heroku git:remote -a nome-do-seu-app-heroku --remote nome-do-
 
 ## Buildpack
 
+Em alguns casos, precisamos rodar algum script ou realizar alguma configuração para publicar nosso app. Por exemplo, para publicar uma aplicação `React` precisamos "servi-la" com um server-side app (back-end), como, por exemplo, um server com `express` .
+Porém, para facilitar esses processos, existem os `buildpacks` , que automatizam esses e outros processos. Os buildpacks pode ser oficiais ou criados e publicados pela comunidade, e podem agregar muito em nosso processo de Deploy .
+Com um buildpack, conseguimos fazer facilmente o deploy da nossa aplicação criada em React, mantendo as páginas de "maneira estática" e sem precisar de um back-end server-side. Faremos isso utilizando o buildpack `mars/create-react-app` . Além disso, ele utilizará `Nginx`, , o que vai prover uma otimização da performance e da segurança ao nosso app .
+Legal, né? E o melhor: é muito simples utilizá-los.
+Vamos mostrar no próximo tópico como usaremos o buildpack que mencionamos com nosso exemplo em React.
+Você pode consultar o catálogo de buildpack https://elements.heroku.com/buildpacks
+
+<h1>Fazendo deploy</h1>
+
+Para fazer deploy do seu app Heroku, basta você utilizar o comando git push de seu repositório local para a branch master do remote do Heroku;
+
+`git push heroku-origin master`
+
+Como renomeamos o remote que era apenas heroku com o nome heroku-origin usamos este para fazer o deploy;
+Feito isso, caso seu build tenha sido feito com sucesso, no terminal será logada uma mensagem parecida com a seguinte:
+
+[…]
+remote: Released v3
+remote: https://nome-do-seu-app-123.herokuapp.com/ deployed to Heroku
+remote:
+remote: Verifying deploy… done.
+[…]
+
+Pronto! Acesse a URL retornada pelo Heroku e você verá que sua aplicação está no ar!
+Podemos fazer o push do nosso remote `heroku-homolog` também! Dessa forma, execute o mesmo comando acima, apenas mudando o nome do remote:
+
+`git push heroku-homolog master`
+
+
 
 
 
