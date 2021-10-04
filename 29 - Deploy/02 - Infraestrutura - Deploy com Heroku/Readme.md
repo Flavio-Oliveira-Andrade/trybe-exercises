@@ -263,12 +263,47 @@ Dessa forma, a versão da branch branch-teste foi publicada.
 Além disso, é importante que saiba que ao setar variáveis de ambiente no front-end, essas variáveis já precisam existir no momento do build , pois a forma como elas funcionam é diferente de como funcionam no back-end.
 No back-end, quando utilizamos process.env.ALGUMA_COISA , ele vai considerar o valor de ALGUMA_COISA que está definido na máquina atual. Já no front-end, quando se executa o comando npm start ou npm run build , ele vai pegar todos os process.env.* e irá trocar pelo valor daquela variável naquele momento.
 Então, caso se tenha um process.env.REACT_APP_API_URL no front-end, e REACT_APP_API_URL tenha o valor "xablau" naquele momento, ele vai apagar process.env.REACT_APP_API_URL e irá substituir por "xablau" . Por esse motivo, na hora de subir o front-end no Heroku , é preciso setar as variáveis de ambiente antes de executar o comando de push , pois é no momento do push que o npm run build é executado e que os process.env.* são convertidos para os valores das variáveis.
+
 ⚠️ Atenção: Quando você executa um push para o Heroku, por mais que você pare o processo utilizando Ctrl + C , o deploy não será cancelado. Uma vez iniciado o processo no Heroku, ele continuará a ser executado até o fim em background no servidor.
+
 Lidando com vários deploys
+
 É possível iniciar um novo deploy mesmo que um outro, do mesmo app , já esteja executando e ainda não tenha finalizado. Por exemplo, duas pessoas estão contribuindo para o mesmo projeto e executam push de commits diferentes quase ao mesmo tempo. Se isso ocorrer, ambos os processos serão iniciados paralelamente e, conforme os processos forem finalizando, as versões serão publicadas.
 Importante: Note que as versões serão publicadas na ordem em que os processos forem concluídos, e não na ordem em que os comandos push forem realizados. Por exemplo:
 Imagine um cenário em que duas pessoas estão contribuindo para o mesmo projeto. Vamos nomeá-las de A e B. Ambas realizaram um push na branch master do Heroku quase ao mesmo tempo. Nesse caso, os servidores do Heroku vão iniciar os dois processos paralelamente e vão publicá-los na sequência em que forem terminando.
 Isso significa que, por mais que o processo A tenha se iniciado antes de B, se B terminar antes, ele será publicado e, posteriormente, quando o processo A finalizar, A será publicado, sobrescrevendo B.
+
+Não importa quem larga primeiro, e sim a ordem de chegada.
+
+# Acompanhando sua aplicação
+
+apos o deploy, seu serviço fica disponivel em uma URL do Heroku, e o app pode ser gerenciado pelo CLI. para listar os serviços que você tem em execução, utilize o comando `apps.`
+
+`heroku apps`
+Para ver os detalhes de um app específico, utilize o comando apps:info :
+
+`heroku apps:info nome-do-seu-app-12345`
+
+## variaveis de ambiente
+
+casoo o seu projeto possua variaveis de ambiente, voce pode setá-las utilizando o comando  `config:set`
+`heroku config:set TESTE="texto qualquer" --app nome-do-seu-app-12345`
+
+Para listar as variáveis de ambiente, basta utilizar o comando config .
+
+`heroku config --app nome-do-seu-app-12345`
+
+Logs
+Para monitorar os logs do apps, utilize logs:
+`heroku logs --app nome-do-seu-app-12345`
+
+Por padrão, o comando retorna as últimas 100 linhas de logs.
+Caso você queira mudar isso, utilize o parâmetro --num our -n :
+
+`heroku logs -n 200 --app nome-do-seu-app-12345`
+O parâmetro --tail ou -t abre uma sessão para mostrar em tempo real os últimos logs. Para retornar ao prompt , basta executar Ctrl+C :
+
+`heroku logs --tail --app nome-do-seu-app-12345`
 
 
 
