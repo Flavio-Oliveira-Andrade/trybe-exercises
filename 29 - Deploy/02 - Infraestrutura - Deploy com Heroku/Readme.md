@@ -305,6 +305,13 @@ O parâmetro --tail ou -t abre uma sessão para mostrar em tempo real os último
 
 `heroku logs --tail --app nome-do-seu-app-12345`
 
+## Removendo um app do HEROKU
+Anteriormente voce viu como remover um remote para ele não aponte mais para um app no heroku. De maneira semelhante é possivel remover tambem um app  que voce poblicou la.  Para isto utilize o comando `heroku destroy` através da sintaxe
+
+`heroku destroy --app nome-do-app-12345 --confirm nome-do-app-12345`
+
+`heroku destroy --app meu-deploy-de-testes-29302 --confirm meu-deploy-de-testes-29302`
+
 
 
 
