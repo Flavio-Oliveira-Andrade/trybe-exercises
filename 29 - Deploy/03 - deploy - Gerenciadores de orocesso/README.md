@@ -170,3 +170,157 @@ O comando te redirecionará para o navegador para você prosseguir com o login. 
 
 São exibidas diversas informações do servidor. No nosso caso, o servidor é nossa máquina, pois estamos rodando localmente. As informações exibidas são o consumo de recursos (CPU e Memória) e as configurações da máquina (como quantidade de cores, qual processador, versão do Node.js etc.).
 Também é possível assistir aos logs em tempo real, criar métricas personalizadas, acompanhar o desempenho do app (requests ativas, consumos etc.) e mostrar também se houve algum restart ou problemas na aplicação.
+
+# Modo Cluster
+Para aplicações Node.js, o PM2 possui um Modo Cluster . Esse modo permite escalar nossa aplicação entre as CPUs disponíveis na máquina, sem a necessidade de modificações no código, aumentando a performance e a disponibilidade de nossa app , de acordo com as CPUs disponíveis.
+Isso significa ter nosso código rodando em diversas CPUs e as chamadas à nossa aplicação sendo divididas entre elas, balanceando a carga . Esse processo é chamado de load balancing , e é comum não só para a divisão entre CPUs, mas entre qualquer outro recurso, como servidores ou processos.
+
+Ao rodar a aplicação em quatro processos, temos ganho tanto na performance, já que não estaremos concorrendo à mesma CPU, quanto na resiliência de nosso ambiente, pois, caso ocorra algum erro em apenas um dos processos, os demais continuarão a ser executados.
+
+Note que, apesar de utilizarmos mais de uma CPU, não teremos o mesmo processo rodando em mais de uma CPU. O que teremos é uma relação um para um, ou seja, um processo para um CPU.
+Dito isso, caso uma API receba quatro chamadas, por exemplo, cada CPU processará uma requisição independente (considerando o exemplo acima com uma máquina de quatro cores).
+Por baixo dos panos, é utilizado o Node.js Cluster Module, que escala a aplicação em processos filhos e automaticamente compartilha portas do servidor.
+Para utilizar esse recurso, basta optar por instances ou i nos comandos start , reload ou restart , informando o número de processos.
+
+\$ pm2 start index.js --instances 2 --name <NOME_DO_PROCESSO>
+Nesse exemplo, serão iniciados dois processos.
+Outra opção é utilizar, no lugar do número de instâncias, a tag max ou 0 . Desse modo, o PM2 vai criar uma instância para cada CPU disponível na máquina.
+
+\$ pm2 start index.js -i max --name <NOME_DO_PROCESSO>
+
+Se executado em uma máquina que possui quatro cores, serão iniciados quatro processos.
+Caso o número de instâncias passado seja maior que o número de CPUs, o PM2 vai distribuir as instâncias entre as CPUs existentes, mantendo mais de um processo na mesma CPU. Isso não terá impacto na performance do processamento, pois mais de um processo vai concorrer pelo mesmo core , mas pode fazer sentido para casos específicos.
+
+# Bônus
+Acabamos de conhecer o Modo Cluster e suas principais características. Caso você queira se aprofundar mais no assunto de performance de uma aplicação, abordado dentro de Cluster, vamos falar agora um pouco sobre os conceitos de Scaling e Stateless . Se não quiser se aprofundar nesses conceitos agora, pode partir para próxima sessão!
+
+# Scaling
+
+Uma outra forma de aumentar o número de processos é utilizando o comando scale .
+Esse comando pode ser utilizado de duas maneiras:
+Informando o total de processos que você quer:
+
+    \$ pm2 scale <NOME_DO_PROCESSO> 3
+      Nesse caso, o número de processos será definido como três. Isso significa que, caso existam menos que três, novos processos serão criados. Se houver mais, serão excluídos processos para totalizar o "três" passado como parâmetro.
+ Aqui, serão adicionados três novos processos além dos que já estão em execução.
+
+# Stateless
+
+Juntamente com os conceitos de scaling e cluster mode , temos um muito interessante: o stateless .
+Ao dizer que uma aplicação é stateless , estamos informando que ela não possui estado. Ou seja, nenhuma informação do usuário é salva em uma sessão para ser utilizada por ele em uma próxima sessão.
+Toda informação é trabalhada durante o tempo de duração daquele processo (durante o tempo em que uma requisição é recebida até sua resposta ser gerada, por exemplo). Os dados que, necessariamente, precisam ser persistidos vão utilizar alguma solução stateful , ou seja, que gerencie estado, como um bancos de dados ou um storage , por exemplo.
+Essa arquitetura permite, principalmente:
+Escalar horizontalmente suas aplicações de maneira simples em múltiplos servidores;
+Cachear de forma mais fácil e, consequentemente, tornar suas aplicações mais rápidas;
+Menos complexidade de storages , já que esse processo é feito de maneira unificada e por uma solução especializada.
+Esses conceitos são bem populares no desenvolvimento de aplicações modernas, e conhecê-los é de grande importância.
+
+# Ecosystem file
+
+É possível passar um arquivo de configuração para o PM2 executar suas aplicações. Esse arquivo é chamado de ecosystem . Nele você configura comportamentos, opções, variáveis de ambiente e arquivos de logs de cada aplicação.
+O ecosystem agrega ainda mais valor em projetos com arquitetura de microsserviços, em que uma aplicação é composta por um conjunto de serviços, cada um executando no seu próprio processo. Com o ecosystem, é possível definir individualmente a configuração de cada aplicação ou serviço. Para colocar no ar, basta executar o arquivo, e todas as configurações são aplicadas.
+O arquivo de configuração pode ser feito nos formatos Javascript , JSON ou YAML .
+Para executá-lo, basta utilizar um dos comandos do PM2, como start , restart , stop , delete ou reload , e passar o arquivo como parâmetro.
+Exemplo de utilização:
+
+\$ pm2 [start|restart|stop|delete] ecosystem.config.js
+
+Javascript
+Vamos a um exemplo de arquivo ecosystem em Javascript :
+
+module.exports = {
+  apps: [
+    {
+      name: 'app',
+      script: './index.js'
+    },
+    //...
+  ]
+};
+
+No exemplo acima, especificamos na propriedade apps os processos que teremos. Perceba que a propriedade recebe um array de objetos, o que significa que ela está preparada para receber a configuração de N aplicações.
+Em arquiteturas de microsserviços, podemos explorar a funcionalidade descrita acima listando todos os apps (ou serviços) e suas diferentes configurações. Dessa forma, a complexidade de executar cada um individualmente diminui.
+No objeto, definimos duas propriedades: name e script . Ambas são conhecidas nossas. Lembra que, ao fazer pm2 start em um script , definimos um nome e um arquivo de "index"? Então, esse nome e esse arquivo correspondem a essas propriedades que utilizamos no arquivo ecosystem.
+Um start através desse arquivo ecosystem ficaria assim:
+
+\$ pm2 start ecosystem.config.js
+O código acima, se não fosse executado com ecosystem , teria a seguinte forma:
+\$ pm2 start index.js --name <NOME_DO_PROCESSO>
+
+# YAML
+Outra opção é criar um arquivo YAML, que é  um formato mais simples e muito commum para a criação de arquivos de configuraçõe e definicções. por exemplo, na aula sobre o Heroku, vimos o procfile, , que oe baseado em YML
+
+O exemplo abaixo tem a mesma função que o exemplo em javaScripts, porem utiliza YML
+
+apps:
+
+- name: app
+  script: ./index.js
+
+Perceba como a estrutura fica muito maius simples e legivel
+
+# Multiaplicativos
+Conforme dito anteriormente, o ecosystem permite a definição de N aplicações. Para defini-las, basta utilizar a lista em apps . Por exemplo:
+
+apps:
+
+- name: app-1
+  script: .app-1/index.js
+- name: app-2
+  script: .app-2/index.js
+- name: app-3
+  script: .app-3/index.js
+
+  Ao executar um start apontando para esse arquivo, serão iniciados três processos, pois definimos três aplicações dentro de apps . Caso queira executar uma aplicação específica, é possível utilizando a flag --only , como se segue:
+
+  \$ pm2 start ecosystem.config.yml --only app-1
+
+  Nesse caso, será iniciado apenas o app de nome "app-1". Caso queira executar apenas algumas aplicações , o parâmetro pode ser utilizado separando os apps desejados por vírgula. Por exemplo:
+
+  \$ pm2 start ecosystem.config.yml --only "app-1,app-2"
+
+  Nesse caso, serão executados apenas o app-1 e o app-2 .
+
+  # Instâncias
+
+  Outro parâmetro possível é o número de instâncias que aquela aplicação deve ter, utilizando a funcionalidade do modo cluster .
+Abaixo, definimos que o app deverá ser iniciado com quatro instâncias:
+
+apps:
+
+- name: app
+  script: ./index.js
+  exec_mode: cluster
+  instances: 4
+
+  Perceba o campo exec_mode . Através dele, habilitamos o modo cluster para esse app . A propriedade instances indica o número de processos que será utilizado pela aplicação.
+Importante: Ao alterar o arquivo ecosystem , é necessário deletar e iniciar novamente seu projeto do PM2 para que as alterações sejam aplicadas.
+
+# Variáveis de Ambiente
+
+Para utilizar variáveis de ambiente, basta definir uma propriedade env_ + nome do ambiente . Por exemplo, para utilizar variáveis distintas para os ambientes de prod e homolog , definimos as propriedades env_prod e env_homolog :
+
+apps:
+
+- name: app
+  script: ./index.js
+  exec_mode: cluster
+  instances: 4
+  env_prod:
+    ENVIRONMENT: PRODUCTION
+  env_homolog:
+    ENVIRONMENT: HOMOLOG
+
+Para executar, basta utilizar a opção env e selecionar quais variáveis serão passadas. Por exemplo, para utilizar as variáveis de homologação:
+
+\$ pm2 start ecosystem.config.yml --env homolog
+
+O valor é sempre o nome definido na propriedade do arquivo, sem o prefixo "env_" . Ou seja, imagine que queremos criar um ambiente de teste. Para isso, vamos criar a propriedade env_staging . Em seguida, para podermos utilizar as variáveis do ambiente de teste, vamos executar a aplicação da seguinte forma:
+
+\$ pm2 start ecosystem.config.yml --env staging
+
+
+
+
+
+
