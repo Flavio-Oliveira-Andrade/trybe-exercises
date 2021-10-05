@@ -94,3 +94,79 @@ Para parar um processo, basta executar o comando stop :
 
 \$ pm2 stop <NOME_DO_PROCESSO>
 Esse comando somente interrompe o processo, permitindo iniciá-lo novamente utilizando o comando start .
+
+\$ pm2 start <NOME_DO_PROCESSO>
+Caso queira executar um comando que terá efeito em todos os processos, basta usar all no lugar do nome do processo. Por exemplo, para parar todos os apps:
+
+\$ pm2 stop all
+
+# Delete
+Se você quiser excluir o app (o processo da aplicação) da lista de processo do PM2, utilize delete :
+\$ pm2 delete <NOME_DO_PROCESSO>
+
+# Restart
+Para reiniciar um processo, utilize o comando `restart` :
+
+\$ pm2 restart <NOME_DO_PROCESSO>
+Lembre-se de que, se houve alterações no arquivo, elas serão carregadas. O comando restart mata os processos e depois os reinicia. Isso significa que pode haver um curto "downtime", ou seja, um curto espaço de tempo em que seu serviço não vai responder.
+
+# Reload
+Opostamente ao restart , o comando reload é 0-second-downtime , ou seja, não causa downtime em seu app. Isso acontece porque ele primeiro sobe o novo processo e depois finaliza o anterior.
+
+\$ pm2 reload <NOME_DO_PROCESSO>
+
+Caso o gerenciador não consiga utilizar reload em sua aplicação, o clássico restart será aplicado no lugar.
+
+# Monitorando Processos
+
+List
+
+Para listar todos os processos que estão sendo gerenciados pelo PM2, utilize o comando `list` .
+
+\$ pm2 list
+
+O comando exibirá uma saída semelhante a essa em seu terminal:
+
+Perceba que são exibidas informações importantes, como o id e o name de cada processo. Esses identificadores são aqueles que podem ser utilizados nos outros comandos do PM2, como o stop e o restart .
+Outro campo interessante é a versão ( version ) do seu app . Essa versão é aquela definida em seu package.json . Esse campo pode ser utilizado para saber se realmente seu código foi atualizado após alguma mudança.
+São exibidos, também, campos que mostram o uso de recursos, o status do processo, o usuário que executou cada processo, se sua aplicação foi reiniciada e, caso tenha sido, quantas vezes.
+O comando list também pode ser executado com ls , l e status . Por exemplo:
+
+\$ pm2 ls
+
+Caso você queira exibir a lista de processos ordenada, basta passar a flag sort . Essa flag permite a ordenação por todas as colunas exibidas: name , id , pid , memory , cpu , status e uptime . Junto a isso, é possível passar um segundo parâmetro informando se a ordenação deverá ser ascendente ou descendente: asc ou desc , respectivamente.
+
+\$ pm2 list --sort name:desc
+
+Por padrão, sem a flag sort , a listagem é ordenada pelo "nome" do processo e em ordem ascendente.
+
+# show
+Para exibir mais detalhes sobre um processo específico, utilize o comando `show` :
+
+\$ pm2 show <NOME_DO_PROCESSO>
+
+Através dele, é possível ver informações como a localização dos arquivos de logs, o caminho para o arquivo do processo, se aquele processo foi reiniciado etc. Além disso, é possível ver dados de métricas como latência do Event Loop e quantidade de requests ativas.
+
+# Logs
+
+O comando logs exibe o histórico de seus apps em tempo real. Você pode passar como parâmetro o nome de um processo específico, como no exemplo abaixo. Caso contrário, serão listados os logs de todos os apps.
+
+\$ pm2 logs <NOME_DO_PROCESSO>
+
+# Monit
+Utilizando o comando monit , é possível visualizar um dashboard em tempo real diretamente no seu terminal.
+
+`pm2 monit`
+Nele, é possível acompanhar um processo específico em real time , observando seus logs e o uso de recursos.
+
+# Interface Web
+Outra maneira bem legal de monitorar seus apps é utilizando o dashboard do PM2. Ele funciona em um modelo freemium e, com uma conta free, já conseguimos utilizar alguns recursos.
+O Dashboard vai mostrar os processos em execução pelo PM2 em sua máquina. Dito isso, para visualizar as métricas, lembre-se de deixar algum processo rodando.
+Para utilizar o serviço, basta criar uma conta no site oficial.
+Após ter a conta criada, basta executar:
+
+\$ pm2 plus
+O comando te redirecionará para o navegador para você prosseguir com o login. Feito isso, você já será redirecionado para um dashboard, parecido com o abaixo:
+
+São exibidas diversas informações do servidor. No nosso caso, o servidor é nossa máquina, pois estamos rodando localmente. As informações exibidas são o consumo de recursos (CPU e Memória) e as configurações da máquina (como quantidade de cores, qual processador, versão do Node.js etc.).
+Também é possível assistir aos logs em tempo real, criar métricas personalizadas, acompanhar o desempenho do app (requests ativas, consumos etc.) e mostrar também se houve algum restart ou problemas na aplicação.
