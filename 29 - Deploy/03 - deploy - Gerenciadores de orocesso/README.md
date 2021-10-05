@@ -392,6 +392,81 @@ apps:
   script: ./index.js
   watch: ./
 
+## PM2  com outras linguagens
+
+Conforme dito no começo, utilizamos como exemplo aplicações em Node.js, em que o PM2 é muito popular e temos mais familiaridade. Porém podemos utilizá-lo em outras linguagens.
+Assim como o Heroku, o PM2 consegue inferir a linguagem e, consequentemente, saber como executá-la. Ao inferir que uma aplicação é em Node.js, por exemplo, ele sabe que deverá executar o arquivo com o comando node .
+Essa relação é feita a partir de uma lista de "interpretadores". Nessa lista, estão presentes a extensão e o respectivo interpretador da linguagem que está sendo utilizada em um projeto. A lista default é:
+
+{
+".sh": "bash",
+".py": "python",
+".rb": "ruby",
+".coffee" : "coffee",
+".php": "php",
+".pl" : "perl",
+".js" : "node"
+}
+
+Caso seja necessário executar uma aplicação em um formato diferente dos conhecidos pelo PM2, é possível utilizar a flag --interpreter e passar o interpretador desejado:
+
+\$ pm2 start hello-world.py --interpreter=python
+
+# PM2 com Heroku
+
+Isso mesmo, podemos fazer um deploy no hewroku utilizando os recursos disponiveis do PM2
+
+O PM2 possui, além do CLI, um módulo para ser utilizado como dependência do seu projeto. Esse módulo é utilizado para usar as vantagens do PM2 dentro de um container.
+Lembra que o Heroku usa essa arquitetura de containers com os Dynos ?
+Então, esse é o caminho! Vamos lá.
+Primeiro, devemos adicionar o módulo ao nosso projeto. Estando na raiz do projeto, utilizamos o npm ou o yarn para instalá-lo:
+
+\$ npm install pm2
+
+Utilizaremos esse módulo para dar start no projeto. No Heroku, precisamos definir esse script no package.json , que ficará assim:
+
+// ...
+"scripts": {
+  "start": "pm2-runtime start ecosystem.config.yml"
+}
+// ...
+
+Perceba que aqui estamos utilizando o módulo pm2-runtime , e não o CLI.
+O pm2-runtime tem o objetivo de agrupar seus aplicativos em um ambiente de produção adequado do Node.js. Ele resolve problemas de execução de aplicativos Node.js dentro dos containers, como controle de fluxo de processo, monitoramento automático de aplicativos etc.
+Agora, precisamos criar o arquivo ecosystem que estamos referenciando no package.json .
+Para isso, basta criar um arquivo na raiz do projeto. Esse arquivo deve ter o mesmo nome que está no script de start, ou seja, o nome do arquivo da raiz deve ser ecosystem.config.yml .
+Em seguida, vamos colocar as configs desejadas. Por exemplo:
+
+
+apps:
+
+- name: app
+  script: ./index.js
+
+
+Agora, é só seguir com o deploy no Heroku!
+
+# Para aprofundar mais!     Modo Cluster + Heroku
+
+Uma feature bem legal de se explorar é o cluster mode . Como os Dynos são provisionados com multicores, conseguimos melhorar a resiliência e a performance de nossos apps .
+
+Para isso, basta adicionar as propriedades que vimos anteriormente:
+
+apps:
+
+- name: app
+  script: ./index.js
+  exec_mode: cluster
+  instances: max
+
+  Modo Cluster + Heroku + Dashboard
+Outra funcionalidade bem bacana é integrar o dashboard do PM2 ao Heroku para, além de ter um bom ambiente, sermos capazes de controlá-lo e monitorá-lo!
+
+Assim como os passos anteriores, seguindo a proposta do PM2, o dashboard é bem simples de configurar. Basta adicionar as chaves (credenciais) à nossa aplicação que subirá no Heroku .
+As credenciais ficam disponíveis no dashboard do PM2.
+O vídeo abaixo é um passo a passo de como consultá-las:
+
+
 
 
 
