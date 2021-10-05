@@ -319,6 +319,80 @@ O valor é sempre o nome definido na propriedade do arquivo, sem o prefixo "env_
 
 \$ pm2 start ecosystem.config.yml --env staging
 
+# Auto restart
+
+Conforme vimos, para manter a resiliência dos processos, o PM2 reinicia automaticamente processos que tenham falhado.
+É possível também definir outras configurações para esses restarts
+
+# Memória máxima
+
+Imagine que, por algum motivo, um dos nossos processos vai acumulando uso de RAM ao decorrer do tempo, e passa a utilizar muito mais memória do que o normal. Ou, por algum erro, o processo começa a aumentar muito a memória.
+Para corrigir cenários desse tipo, ou apenas por limitação de hardware, uma das configurações de auto restart do PM2 é a utilização máxima de RAM que aquele processo pode consumir.
+Podemos definir, por exemplo, que ao chegar em 20mb de memória, o processo deverá ser reiniciado. Para isso, utilizamos a opção max_memory_restart . Ela pode ser utilizada tanto como propriedade do app , no arquivo ecosystem , quanto diretamente no start do CLI:
+
+\$ pm2 start index.js --name <NOME_DO_PROCESSO> --max-memory-restart 20M
+
+apps:
+
+- name: app
+  script: ./index.js
+  max_memory_restart: 20M
+
+  Note que o valor recebe a unidade de medida, que pode ser K ilobyte, M egabyte ou G igabyte.
+
+  # Delay de restart
+
+  O PM2 possui a opção --restart-delay , que permite passar um valor fixo, em milissegundos, para a sua aplicação aguardar antes do PM2 restartá-la em caso de erros.
+Via CLI:
+
+\$ pm2 start index.js --name <NOME_DO_PROCESSO> --restart-delay 100
+
+Isso significa que o PM2 vai aguardar 100ms para tentar iniciar o processo.
+Também é possível configurá-lo através do arquivo ecosystem :
+
+apps:
+
+- name: app
+  script: ./index.js
+  restart_delay: 100
+
+  Bônus
+
+  Vimos os principais conceitos do Auto Restart . Caso você queira se aprofundar mais, vamos falar agora um pouco sobre Estratégias de Backoff . Porém, caso não queira aprofundar, pode partir para próxima sessão!
+Estratégias de Backoff
+Com as estratégias de Backoff , é possível configurar sua aplicação para reiniciar de maneira mais inteligente, em vez de somente ficar reiniciando sempre que houver uma exceção.
+Configurando uma estratégia de exponential backoff , é possível ir incrementando um tempo de intervalo entre as tentativas, reduzindo, por exemplo, a carga de conexões em bancos de dados ou outro serviço externo.
+Para configurá-lo, basta adicionar a tag --exp-backoff-restart-delay mais o tempo de delay no start . Você pode fazer isso pelo arquivo ecosystem também:
+Copiar
+apps:
+
+- name: app
+  script: ./index.js
+  exp_backoff_restart_delay: 100
+Nesse exemplo, ao ocorrer um erro, o processo vai aguardar 100ms. Durante esse período, o app ficará com status de waiting restart . Caso ocorra um novo erro, ele aguardará mais 150ms e, se o erro se repetir, ele aguarda mais 225ms, e assim por diante:
+Vai reiniciar em 100ms;
+Vai reiniciar em 150ms;
+Vai reiniciar em 225ms.
+Dessa maneira, o delay entre os restarts vai crescendo em um movimento exponencial, chegando no máximo 15000ms .
+Essa estratégia não é particular do PM2 e é amplamente utilizada, principalmente para gerenciar aplicações com conexões externas.
+
+# Assistindo a Alterações
+
+Com o PM2, também é possível observar alterações em um arquivo! O que isso quer dizer? Quer dizer que ele pode ficar observando um diretório específico e, caso haja alterações nos arquivos, ele automaticamente reinicia os processos.
+Essa funcionalidade é bem legal, principalmente em ambiente de desenvolvimento, onde você está constantemente fazendo atualizações no código e quer visualizar o resultado imediatamente. Então, em vez de ficar parando e executando sua aplicação manualmente toda vez, você pode dizer para o PM2 fazer para você quando algum arquivo for modificado.
+Para utilizar esse recurso, basta utilizar o parâmetro --watch no comando start:
+
+\$ pm2 start index.js --name <NOME_DO_PROCESSO> --watch
+
+Ou através do ecosystem , especificando quais diretórios deverão ser observados:
+
+apps:
+
+- name: app
+  script: ./index.js
+  watch: ./
+
+
 
 
 
