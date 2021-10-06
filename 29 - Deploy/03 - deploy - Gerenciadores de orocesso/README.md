@@ -466,6 +466,135 @@ Assim como os passos anteriores, seguindo a proposta do PM2, o dashboard é bem 
 As credenciais ficam disponíveis no dashboard do PM2.
 O vídeo abaixo é um passo a passo de como consultá-las:
 
+Tendo as chaves em mãos, ou melhor, no clipboard , basta adicioná-las como variáveis de ambiente para nosso app do Heroku, conforme já aprendemos:
+Nota : O comando abaixo pode ser escrito em uma linha apenas, excluindo a necessidade de ter \ ao final de cada linha.
+
+\$ heroku config:set \
+ PM2_PUBLIC_KEY=CHAVE_PUBLICA \
+ PM2_SECRET_KEY=CHAVE_PRIVADA \
+ PM2_MACHINE_NAME=NOME_DO_SERVER \
+ --app NOME_DO_APP_NO_HEROKU
+
+ Temos três variáveis no comando acima: uma chave pública ( PM2_PUBLIC_KEY ), uma privada ( PM2_SECRET_KEY ) e um nome para identificar a máquina ( PM2_MACHINE_NAME ) que você está utilizando.
+Após setar as variáveis, o Dyno automaticamente será reiniciado e, ao atualizar o dashboard, ele já estará mostrando as métricas do ambiente.
+⚠️ Lembre-se : sempre mantenha credenciais e outros dados sensíveis em variáveis de ambientes. Dessa forma, garantimos a segurança e manutenção das aplicações.
+
+
+Exercícios
+Hora de pôr a mão na massa!
+back-end
+Antes de começar: versionando seu código
+Para versionar seu código, utilize o seu repositório de exercícios. 😉
+Abaixo você vai ver exemplos de como organizar os exercícios do dia em uma branch, com arquivos e commits específicos para cada exercício. Você deve seguir este padrão para realizar os exercícios a seguir.
+Abra a pasta de exercícios:
+Copiar
+$ cd ~/trybe-exercicios
+Certifique-se de que está na branch main e ela está sincronizada com a remota. Caso você tenha arquivos modificados e não comitados, deverá fazer um commit ou checkout dos arquivos antes deste passo.
+Copiar
+$ git checkout main
+$ git pull
+A partir da main, crie uma branch com o nome exercicios/28.2 (bloco 28, dia 2)
+Copiar
+$ git checkout -b exercicios/28.2
+Caso seja o primeiro dia deste módulo, crie um diretório para ele e o acesse na sequência:
+Copiar
+$ mkdir back-end
+$ cd back-end
+Caso seja o primeiro dia do bloco, crie um diretório para ele e o acesse na sequência:
+Copiar
+$ mkdir bloco-28-deployment
+$ cd bloco-28-deployment
+Crie um diretório para o dia e o acesse na sequência:
+Copiar
+$ mkdir dia-2-deploy-gerenciadores-de-processos
+$ cd dia-2-deploy-gerenciadores-de-processos
+Os arquivos referentes aos exercícios deste dia deverão ficar dentro do diretório ~/trybe-exercicios/back-end/block-28-deployment/dia-2-deploy-gerenciadores-de-processos. Lembre-se de fazer commits pequenos e com mensagens bem descritivas, preferencialmente a cada exercício resolvido.
+
+Verifique os arquivos alterados/adicionados:
+Copiar
+$ git status
+On branch exercicios/28.2
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+  modified:   exercicio-1
+
+Adicione os arquivos que farão parte daquele commit:
+Copiar
+# Se quiser adicionar os arquivos individualmente
+$ git add caminhoParaArquivo
+
+# Se quiser adicionar todos os arquivos de uma vez, porém, atente-se
+para não adicionar arquivos indesejados acidentalmente
+$ git add --all
+
+Faça o commit com uma mensagem descritiva das alterações:
+Copiar
+$ git commit -m "Mensagem descrevendo alterações"
+Você pode visualizar o log de todos os commits já feitos naquela branch com git log.
+Copiar
+$ git log
+commit 100c5ca0d64e2b8649f48edf3be13588a77b8fa4 (HEAD -> exercicios/28.2)
+Author: Tryber Bot <tryberbot@betrybe.com>
+Date:   Fry Sep 27 17:48:01 2019 -0300
+
+    Exercicio 2 - mudando o evento de click para mouseover, tirei o alert e coloquei pra quando clicar aparecer uma imagem do lado direito da tela
+
+commit c0701d91274c2ac8a29b9a7fbe4302accacf3c78
+Author: Tryber Bot <tryberbot@betrybe.com>
+Date:   Fry Sep 27 16:47:21 2019 -0300
+
+    Exercicio 2 - adicionando um alert, usando função e o evento click
+
+commit 6835287c44e9ac9cdd459003a7a6b1b1a7700157
+Author: Tryber Bot <tryberbot@betrybe.com>
+Date:   Fry Sep 27 15:46:32 2019 -0300
+
+    Resolvendo o exercício 1 usando eventListener
+Agora que temos as alterações salvas no repositório local precisamos enviá-las para o repositório remoto. No primeiro envio, a branch exercicios/28.2 não vai existir no repositório remoto, então precisamos configurar o remote utilizando a opção --set-upstream (ou -u, que é a forma abreviada).
+Copiar
+$ git push -u origin exercicios/28.2
+Após realizar o passo 9, podemos abrir a Pull Request a partir do link que aparecerá na mensagem do push no terminal, ou na página do seu repositório de exercícios no GitHub através de um botão que aparecerá na interface. Escolha a forma que preferir e abra a Pull Request. De agora em diante, você repetirá o fluxo a partir do passo 7 para cada exercício adicionado, porém como já definimos a branch remota com -u anteriormente, agora podemos simplificar os comandos para:
+Copiar
+# Quando quiser enviar para o repositório remoto
+$ git push
+
+# Caso você queria sincronizar com o remoto, poderá utilizar apenas
+$ git pull
+Quando terminar os exercícios, seus códigos devem estar todos commitados na branch exercicios/28.2, e disponíveis no repositório remoto do GitHub. Pra finalizar, compartilhe o link da Pull Request no canal de Code Review para a monitoria e/ou colegas revisarem. Faça review você também, lembre-se que é muito importante para o seu desenvolvimento ler o código de outras pessoas. 🤜🏼🤛🏼
+
+
+Agora, a prática
+Vamos colocar em prática todo o conteúdo que vimos. Para isso, faremos alguns exercícios práticos utilizando os principais recursos do PM2.
+Exercício 1 : Crie uma API simples que retorne uma mensagem. Feito isso, gerencie seus processos da seguinte maneira:
+Crie UM processo no PM2 utilizando o CLI;
+Restart e recarregue o processo utilizando o CLI do PM2 (lembre-se que há comandos distintos para cada um);
+Pare o processo;
+(Bônus) - Escalone para mais 5 processos;
+(Bônus) - Defina para 3 a quantidade de processos;
+Remova o processo da listagem do PM2 ;
+
+Exercício 2 : Crie um arquivo ecosystem . O arquivo configurará o PM2 para:
+Observar alterações no diretório da aplicação e, caso ocorram, reiniciar automaticamente sua aplicação;
+Ativar o modo cluster e configurar a quantidade de processos rodando para o máximo possível;
+Reiniciar o processo sempre que ele alcançar o consumo de 100MB de memória.
+
+Exercício 3 : Explorando variáveis de ambiente:
+Adicione à API o uso de uma variável de ambiente que altere a mensagem exibida em sua resposta ou outro comportamento que preferir;
+Adicione ao arquivo ecosystem do exercício anterior dois contextos de variáveis: env_prod e env_homolog .
+Execute o processo utilizando o contexto prod . Em seguida, execute o processo utilizando o contexto homolog . Valide se o comportamento foi alterado.
+
+Exercício 4 : Adicione monitoramento à sua API:
+Crie uma conta no PM2;
+Adicione o monitoramento à API dos exercícios anteriores, utilizando o comando do CLI do PM2;
+Verifique se o dashboard web está exibindo as informações de sua API.
+
+
+
+
+
+
 
 
 
