@@ -134,3 +134,241 @@ describe('Testando a função "getLetterGrades"', function () {
     });
   });
 });
+
+## Open/close principle
+Imagine, para o nosso exemplo, o seguinte cenário: somos uma empresa que administra notas de escolas. Cada escola tem seu corte aprovação ( no nosso caso, 0,7). Otimo Fizemos nosso produto, ele funcionou,e agora uma segunda escola quer ser nossa cliente! Mas o corte de aprovação dela é 0,8. Precisamos que nosso sistema contemple essa nova realidade Aí fazemos assim:
+
+// ./index.js
+
+// ...
+
+/* "Converter" */
+const percentageGradesIntoLetters = ({ name, disciplines, school }) => ({
+  name,
+  disciplines: disciplines.map(getLetterGrades),
+  school});
+
+/* "Determinar" */
+const approvedStudents = ({ school, disciplines }) =>
+  disciplines.every(({ grade }) =>
+    (school === 'Standard' ? grade >= 0.7 : grade >= 0.8));
+
+/* "Atualizar" */
+const updateApprovalData = ({ name: studentName, disciplines }) => {
+  console.log(`A pessoa com nome ${studentName} foi aprovada!`);
+
+  disciplines.map(({ name, letterGrade }) =>
+    console.log(`${name}: ${letterGrade}`));
+};
+
+// ...
+
+/* Abaixo temos o exemplo de execução com algumas adições */
+const students = [
+  {
+    name: 'Lee',
+    school: 'Standard',
+    disciplines: [
+      { name: 'matemática', grade: 0.8 },
+      { name: 'história', grade: 0.9 },
+    ],
+  },
+  {
+    name: 'Albus',
+    school: 'Hogwarts',
+    disciplines: [
+      { name: 'divination', grade: 0.8 },
+      { name: 'potions', grade: 0.9 },
+    ],
+  },
+];
+
+// setApproved(students);
+
+Essa Solução funciona, mas não esta boa! Nós tivemos que mudar nossa função para acrescentar o novo comportamento a ela! O que acontecerá quando surgi uma terceira escola? Talvez uma quarta, quinta e assim por diante.
+
+Pois bem! Comforma estabelecemos no inicio, o que esse principio nos diz é o seguinte:
+  Você deve ser capaz de entender um compoirtamento de uma função sem modificar seus comportamentos ja existentes.
+
+Beleza, mas o que isso significa? Significa que, caso você precise acrescentar um comportamento ao seu código e isso não for possivel sem mudar trechos de codigos que ja existam, temos um problema. veja bem: quando um codigo funciona e esta em produção numa aplicação enorme, queremos evitar mudaro que ja existe e funciona.
+
+Mas todo código precisa ser atualizado com o tempo. Cmomo podemos , então atualizar o nosso codigo sem alterar o que ja existe ? O que se deve ser buscar fazer  é escrever o çodigo de modo que, no futuro, você , você poissa  acrescentar comportamento sem mudar os que ja existem.
+
+No nosso caso, seria ser capaz de aobter o corte de aprovação os nomes conceitos de quaisquer escolas sem alterar a lógica da nossa aplicação! isso requer que refatoremos o nosso código para deixa-lo aberto para extensões, mamtendo-o fechado para modificações
+
+// ./index.js
+
+/* Apoio para a função `setApproved` */
+const SCHOOL_DATA = {
+  Standard: {
+    approvalGrade: 0.7
+  },
+  Hogwarts: {
+    approvalGrade: 0.8
+  }
+};
+
+// ...
+
+/* "Determinar" */
+const approvedStudents = (disciplines, { approvalGrade }) =>
+  disciplines.every(({ grade }) => grade > approvalGrade);
+
+// ...
+
+function setApproved(students) {
+  students
+    .map(percentageGradesIntoLetters)
+    .filter(({ disciplines, school }) => approvedStudents(disciplines, SCHOOL_DATA[school]))
+    .map(updateApprovalData);
+}
+
+
+Observe que, agora, a nossa função approvedStudents está totalmente genérica . Quando quisermos acrescentar mais uma escola, ou duas, ou cem, basta adicionar os dados dela à nossa "base". Aqui, simulamos com o objeto SCHOOL_DATA , assim como o fizemos com o objeto GRADE_DICT , onde também estávamos com um problema com o "engessamento" da função getGradeLetter . Conseguiremos, assim, estender o nosso comportamento sem modificar a função mais. Agora ela respeita o Open/Closed !
+Nossos testes também ficarão muito mais legíveis e genéricos quanto ao critério de aprovação:
+
+// ./tests/unit/approvedStudents.test.js
+
+const { expect } = require('chai');
+
+const { approvedStudents } = require('../../index');
+
+const disciplinesDict = {
+  mathematics: 'matemática',
+  history: 'história',
+};
+
+describe('Testando a função "approvedStudents"', function () {
+  const APPROVAL_GRADE = { approvalGrade: 0.7 };
+
+  describe('quando todas as notas são maiores que o critério de aprovação', function () {
+    it('retorna "true"', function () {
+      const disciplines = [
+        { name: disciplinesDict.mathematics, grade: 0.8 },
+        { name: disciplinesDict.history, grade: 0.9 },
+      ];
+
+      const result = approvedStudents(disciplines, APPROVAL_GRADE);
+
+      expect(result).to.be.equal(true);
+    });
+  });
+
+  describe('quando todas as notas são menores que o critério de aprovação', function () {
+    it('retorna "false"', function () {
+      const disciplines = [
+        { name: disciplinesDict.mathematics, grade: 0.1 },
+        { name: disciplinesDict.history, grade: 0.2 },
+      ];
+
+      const result = approvedStudents(disciplines, APPROVAL_GRADE);
+
+      expect(result).to.be.equal(false);
+    });
+  });
+
+  describe('quando parte das notas são menores que o critério de aprovação', function () {
+    it('retorna "false"', function () {
+      const disciplines = [
+        { name: disciplinesDict.mathematics, grade: 0.5 },
+        { name: disciplinesDict.history, grade: 0.9 },
+      ];
+
+      const result = approvedStudents(disciplines, APPROVAL_GRADE);
+
+      expect(result).to.be.equal(false);
+    });
+  });
+});
+
+Dessa forma, no momento em que você está escrevendo uma função para resolver um problema, é importante se perguntar se é possível que, futuramente, essa função seja usada para resolver outros problemas similares ao atual. Se sim, se esforce para deixá-la aberta a extensões para poder mantê-la fechada a modificações . Como em qualquer princípio, não há necessidade de radicalismo aqui: se uma função não deve ser usada em outros contextos, ela não precisa estar aberta a extensão. Se no futuro isso mudar, você faz uma refatoração. Mas pense com cuidado! A função deixada aberta hoje é uma refatoração a menos para amanhã!
+
+# Dependency Inversion Principle
+
+Aqui não necessitaremos de nenhum arquivo das seções anteriores.
+
+Para este exemplo iremos usar novas dependências, execute o seguinte comando para adicionar os pacotes:npm
+## install node-fetch@2.6.5 axios
+
+Suponha que você quer escrever um programa em JavaScript que faz uma requisição para a API de dad jokes . Assim sendo, você escreve o seguinte código:
+
+Copiar
+// ./dipExample.js
+
+const fetch = require('node-fetch');
+
+const url = 'https://icanhazdadjoke.com';
+
+const requestWithFetch = () => {
+  fetch(url, {
+    headers: new fetch.Headers({
+      Accept: 'application/json',
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => console.log(data.joke))
+    .catch((err) => console.log(err));
+};
+
+const getJokes = (numberOfJokes) => {
+  for (let i = 0; i < numberOfJokes; i += 1) requestWithFetch();
+};
+
+getJokes(5);
+
+module.exports = { getJokes };
+Problema resolvido! Mas agora vamos pensar na questão que está nos acompanhando por todo o dia de hoje: como podemos reusar esse código no futuro para outros contextos sem alterar o código que já existe? Olhe para esse nosso exemplo: aí, estamos usando o fetch para fazer uma requisição à API. A função depende do fetch para funcionar. O fetch , portanto, é uma dependência da função! E o que seria, então, a inversão de dependência? Conforme foi dito lá em cima
+Quem usa uma função deve ser capaz de determinar quais outros módulos ela usa em sua lógica.
+Em outras palavras, "quem usa decide como se usa". Como assim? Imagine que, no futuro, decide-se abolir o uso de fetch no seu projeto em favor do axios . Não queremos alterar o nosso código antigo (vai que ele quebra 😬), mas código novo deve vir com a API nova.
+Só que nós queremos usar a nossa função getJokes numa funcionalidade nova que estamos fazendo, mas sem utilizar o fetch ! Como fazemos? Assim:
+Copiar
+// ./dipExample.js
+
+const axios = require('axios').default;
+const fetch = require('node-fetch');
+
+const url = 'https://icanhazdadjoke.com';
+
+const requestWithAxios = () => {
+  axios
+    .get(url, {
+      headers: { Accept: 'text/plain' },
+    })
+    .then((response) => console.log(response.data));
+};
+
+// const requestWithFetch = () => {
+// ...
+
+const getJokes = (numberOfJokes, jokeRequester = requestWithFetch) => {
+  for (let i = 0; i < numberOfJokes; i += 1) jokeRequester();
+};
+
+getJokes(5, requestWithAxios);
+
+module.exports = { getJokes };
+Repare que, agora, quem chama a função decide qual dependência a função terá , seja o Axios ou o Fetch. E ao colocarmos a requestWithFetch como valor padrão para o parâmetro que acrescentamos à função, garantimos que, em todos os lugares onde essa função já era usada, tudo continuará funcionando.
+Isso que fizemos foi a chamada inversão de dependência . Quem usa decide qual dependência a função terá.
+Mais uma vez olhando pela perspectiva de testes, conseguimos perceber uma grande melhoria na testabilidade aplicando inversão de dependência . Podemos escrever testes para a função da seguinte maneira:
+Copiar
+// ./tests/unit/getJokes.test.js
+
+const { stub } = require('sinon');
+const { expect } = require('chai');
+
+const { getJokes } = require('../../dipExample');
+
+const requesterStub = stub();
+
+describe('Testando a função "getJokes"', function () {
+  it('"requester stub" é chamado uma vez', function () {
+    getJokes(1, requesterStub);
+
+    expect(requesterStub.calledOnce).to.be.equals(true);
+  });
+});
+Rode com NAME=getJokes npm test para validar seu teste.
+Perceba que como a função responsável por realizar a chamada é passada via parâmetro, podemos facilmente criar um stub e passá-lo. Sem a inversão, teríamos que criar um stub de acordo com a implementação do jokeRequester , tendo que entender a lógica do código para encontrar qual a função seria utilizada (a com axios ou com fetch ) e então interceptar tal chamada para conseguir fazer o stub .
+Além disso, se for adicionado um novo jokeRequester ou alterado qual deles seria chamado, nosso teste não precisará ser alterado.
+Outro ponto é que conseguimos testar de maneira unitária cada implementação de jokeRequester , com fetch , com axios ou qualquer outra implementação. No nosso exemplo tais implementações são chamadas simples de API, mas é muito comum situações em que tais dependências possuem diversas lógicas internas e comportamentos, onde esse princípio ajudará muito.
+Agora veremos na prática como funcionam os 3 princípios que vimos até o momento.

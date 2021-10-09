@@ -236,3 +236,131 @@ describe('Testando a função "getLetterGrades"', function () {
     });
   });
 });
+
+// ./index.js
+
+// ...
+
+/* "Converter" */
+const percentageGradesIntoLetters = ({ name, disciplines, school }) => ({
+  name,
+  disciplines: disciplines.map(getLetterGrades),
+  school});
+
+/* "Determinar" */
+const approvedStudents = ({ school, disciplines }) =>
+  disciplines.every(({ grade }) =>
+    (school === 'Standard' ? grade >= 0.7 : grade >= 0.8));
+
+/* "Atualizar" */
+const updateApprovalData = ({ name: studentName, disciplines }) => {
+  console.log(`A pessoa com nome ${studentName} foi aprovada!`);
+
+  disciplines.map(({ name, letterGrade }) =>
+    console.log(`${name}: ${letterGrade}`));
+};
+
+// ...
+
+/* Abaixo temos o exemplo de execução com algumas adições */
+const students = [
+  {
+    name: 'Lee',
+    school: 'Standard',
+    disciplines: [
+      { name: 'matemática', grade: 0.8 },
+      { name: 'história', grade: 0.9 },
+    ],
+  },
+  {
+    name: 'Albus',
+    school: 'Hogwarts',
+    disciplines: [
+      { name: 'divination', grade: 0.8 },
+      { name: 'potions', grade: 0.9 },
+    ],
+  },
+];
+
+// setApproved(students);
+
+// ./index.js
+
+/* Apoio para a função `setApproved` */
+const SCHOOL_DATA = {
+  Standard: {
+    approvalGrade: 0.7
+  },
+  Hogwarts: {
+    approvalGrade: 0.8
+  }
+};
+
+// ...
+
+/* "Determinar" */
+const approvedStudents = (disciplines, { approvalGrade }) =>
+  disciplines.every(({ grade }) => grade > approvalGrade);
+
+// ...
+
+function setApproved(students) {
+  students
+    .map(percentageGradesIntoLetters)
+    .filter(({ disciplines, school }) => approvedStudents(disciplines, SCHOOL_DATA[school]))
+    .map(updateApprovalData);
+}
+
+// ./tests/unit/approvedStudents.test.js
+
+const { expect } = require('chai');
+
+const { approvedStudents } = require('../../index');
+
+const disciplinesDict = {
+  mathematics: 'matemática',
+  history: 'história',
+};
+
+describe('Testando a função "approvedStudents"', function () {
+  const APPROVAL_GRADE = { approvalGrade: 0.7 };
+
+  describe('quando todas as notas são maiores que o critério de aprovação', function () {
+    it('retorna "true"', function () {
+      const disciplines = [
+        { name: disciplinesDict.mathematics, grade: 0.8 },
+        { name: disciplinesDict.history, grade: 0.9 },
+      ];
+
+      const result = approvedStudents(disciplines, APPROVAL_GRADE);
+
+      expect(result).to.be.equal(true);
+    });
+  });
+
+  describe('quando todas as notas são menores que o critério de aprovação', function () {
+    it('retorna "false"', function () {
+      const disciplines = [
+        { name: disciplinesDict.mathematics, grade: 0.1 },
+        { name: disciplinesDict.history, grade: 0.2 },
+      ];
+
+      const result = approvedStudents(disciplines, APPROVAL_GRADE);
+
+      expect(result).to.be.equal(false);
+    });
+  });
+
+  describe('quando parte das notas são menores que o critério de aprovação', function () {
+    it('retorna "false"', function () {
+      const disciplines = [
+        { name: disciplinesDict.mathematics, grade: 0.5 },
+        { name: disciplinesDict.history, grade: 0.9 },
+      ];
+
+      const result = approvedStudents(disciplines, APPROVAL_GRADE);
+
+      expect(result).to.be.equal(false);
+    });
+  });
+});
