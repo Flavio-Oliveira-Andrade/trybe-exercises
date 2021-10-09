@@ -372,3 +372,8 @@ Perceba que como a função responsável por realizar a chamada é passada via p
 Além disso, se for adicionado um novo jokeRequester ou alterado qual deles seria chamado, nosso teste não precisará ser alterado.
 Outro ponto é que conseguimos testar de maneira unitária cada implementação de jokeRequester , com fetch , com axios ou qualquer outra implementação. No nosso exemplo tais implementações são chamadas simples de API, mas é muito comum situações em que tais dependências possuem diversas lógicas internas e comportamentos, onde esse princípio ajudará muito.
 Agora veremos na prática como funcionam os 3 princípios que vimos até o momento.
+
+## Conclusão
+hoje Nós começamos a entender três dos cincos principios de qualidade de codigos do SOLID: o principio da responsabilidade ùnica, o princio aberto fechado e o principio da inversão de responsabilidade de dependência. È muito importante ficar claro: esses principios São complexos no seu entendimento e na sua aplicação, e nós hoje śo começamos a arranhar as possibilidades que eles nos têm a oferecer!
+
+No modulo de Ciências da Computação, no contexto de programação Orientada a Objeto, estudaremos o SOLID com mais profundidade. Por Hora tenha esse entendimento parcial em mente e busque sempre recorrer aos principios quando escrever códigos. Acione-os, pergunte-se o seu codigo o segue. Acredite nos principios e implemente-os passo a passo. no final, você tera feito a dificil tarefa de escrever um código simples de ser entender e se estender.
