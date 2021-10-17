@@ -349,6 +349,206 @@ E pronto! Conseguimos criar uma migration para adição da coluna phone na tabel
 Além de adicionar ou remover colunas, o objeto queryInterface também permite que você altere a estrutura de uma coluna como seu tipo, valor default entre outros detalhes assim como o ALTER TABLE também permite. Você pode consultar esse link da documentação do Sequelize para ver como utilizar esse recurso.
 Agora, vamos aprender a popular nosso banco de dados utilizando o Seeders .
 
+# Seders
+Agora que sabemos de um jeito seguro de criar e recriar um banco de dados, alem de acrescentar/ excluir tabelas e colunas, nós entramos numa outra etapa. Pense, agora que toda vez que executamos as migrations, nosso banco de dados é criado do zero ou seja, sem informações dentro das tabelas.
+
+Vamos supor que estamos trabalhando num projeto que é um e-commerce. Acabamos de entrar nesse projeto e estamos montando nosso ambiente. executamos as migrations e nosso banco de dados foi criado. |Em seguida, executamos o projeto localmente. Quando entramos na home do site não existe nenhum produto, nem categoria, nenhuma marca, nenhum usuario cadastrado e por ahi vai.
+
+os seeders chegam pra resolver problemas como esse! As bibliotecas de mapeamento objeto-relacional permite que controlemos informações que devem ser criadas assim que nosso banco de dados/tabelas forem ciadas. ou seja, podemos configurar nosso banco para ser automaticamente criado e povoado!
+
+No exemplo do e-commerce acima, podemos criar seeds responsavel por gerar informações de produtos, marcas categoirias e etc, toda vez que um banco de dados fosse criado. Com isso, sempre que criássemos o banco de dados do zero e executássemos o projeto, teríamos um e-commerce com as informações básicas para que fosse possível navegar. Isso é especialmente útil quando, num contexto de testes automatizados, precisamos criar um banco e povoar com dados para testá-los! Aprenderemos sobre isso mais adiante nesse bloco.
+Conclusão: um seeder é usado para, basicamente, alimentar o banco de dados com informações necessárias para o funcionamento mínimo da aplicação. Bom, vamos ver agora um pouco da prática de como fazer isso em código. Os seeds seguem a mesma linha das migrations.
+Primeiramente vamos precisar executar pelo CLI a criação de um novo seed:
+
+- npx sequelize seed:generate --name users
+
+Reparem que o arquivo foi criado dentro da pasta seeders com o mesmo formato de um arquivo de uma migration. Agora, devemos adicionar, ao arquivo criado, quais informações aquele seed irá gerar. O código abaixo irá adicionar dois usuários ao banco de dados:
+seeders/[timestamp]-users.js
+
+'use strict';
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => queryInterface.bulkInsert('Users',
+    [
+      {
+        fullName: 'Leonardo',
+        email: 'leo@test.com',
+        // usamos a função CURRENT_TIMESTAMP do SQL para salvar a data e hora atual nos campos `createdAt` e `updatedAt`
+        createdAt: Sequelize.literal('CURRENT_TIMESTAMP'),
+        updatedAt: Sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+      {
+        fullName: 'JEduardo',
+        email: 'edu@test.com',
+        createdAt: Sequelize.literal('CURRENT_TIMESTAMP'),
+        updatedAt: Sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+    ], {}),
+
+  down: async (queryInterface) => queryInterface.bulkDelete('Users', null, {}),
+};
+
+Na função acima, estamos utilizando o parâmetro recebido pela função queryInterface para conversar com o banco de dados. Dessa forma conseguimos inserir os dados que queremos. Estamos adicionando os dados, que estão na estrutura de uma array de objetos, na tabela Users . O queryInterface tem a função bulkInsert , a qual estamos utilizando, que insere múltiplos dados na tabela.
+Note que o seed segue o mesmo princípio de up e down , ou seja, devemos colocar, também, o que o seed deve fazer caso precise reverter a operação. Aqui, também, um código ruim pode quebrar o fluxo de uso/reversão dos seeds, então escreva com atenção! Para executar o seed, basta rodarmos o comando:
+
+- npx sequelize db:seed:all
+
+E para reverter:
+
+- npx sequelize db:seed:undo:all
+
+Teste os dois comandos para analisar o funcionamento! Povoe a outra tabela que você criou no exemplo anterior com alguns seeds. Rode-os e reverta-os! 💥
+
+# Operações
+Com o model implementado, caso precisemos gravar/ler algum dado do banco de dados, conseguimos faze-lo também. Caso precisemos buscar todas as pessoas usuárias, por exemplo, basta fazermos algo parecido com o exemplo de código abaixo:
+controllers/userController.js
+
+const express = require('express');
+const { User } = require('../models');
+const router = express.Router();
+
+// Este endpoint usa o método findAll do Sequelize para retorno todos os users.
+router.get('/', async (_req, res) => {
+  try {
+    const users = await User.findAll();
+
+    return res.status(200).json(users);
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  };
+});
+
+// ...
+
+module.exports = router;
+
+Note que não precisamos escrever uma query SQL para buscar os dados, pois o Sequelize abstrai isso para nós. Ele oculta essa complexidade e nos provê uma forma menos trabalhosa de escrever esse código.
+Reparem que estamos importando o modelo que criamos do arquivo index.js da pasta models, e não diretamente do arquivo User.js . Quando executamos o comando npx sequelize init , o arquivo index.js é gerado dentro da pasta models.
+O código desse arquivo index.js é responsável por, basicamente, realizar a conexão com o banco de dados, através do arquivo config.json , coletar todos os modelos definidos dentro da pasta models e, caso necessário, associar um modelo a algum outro. O caso que mostramos acima foi para buscar todas as pessoas usuárias, mas conseguimos realizar todas as outras operações de consulta, inserção e deleção também.
+controllers/userController.js
+
+const express = require('express');
+const { User } = require('../models');
+const router = express.Router();
+
+// ...
+
+// Este endpoint usa o método findByPk do Sequelize para buscar um usuário pelo id.
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByPk(id);
+
+    if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
+
+    return res.status(200).json(user);
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  }
+});
+
+// Este endpoint usa o método findOne do Sequelize para buscar um usuário pelo id e email.
+// URL a ser utilizada para o exemplo http://localhost:3000/user/search/1?email=aqui-o-email
+router.get('/search/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { email } = req.query;
+    const user = await User.findOne({ where: { id, email }});
+
+    if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
+
+    return res.status(200).json(user);
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  }
+});
+
+// Este endpoint usa o método create do Sequelize para salvar um usuário no banco.
+router.post('/', async (req, res) => {
+  try {
+    const { fullName, email } = req.body;
+    const newUser = await User.create({ fullName, email });
+
+    return res.status(201).json(newUser);
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  }
+});
+
+// Este endpoint usa o método update do Sequelize para alterar um usuário no banco.
+router.put('/:id', async (req, res) => {
+  try {
+    const { fullName, email } = req.body;
+    const { id } = req.params;
+
+    const [updateUser] = await User.update(
+      { fullName, email },
+      { where: { id } },
+    );
+
+    console.log(updateUser); // confira o que é retornado quando o user com o id é ou não encontrado;
+
+    if(!updateUser) return res.status(404).json({ message: 'Usuário não encontrado' });
+
+    return res.status(200).json({ message: 'Usuário atualizado com sucesso!' });
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  }
+});
+
+// Este endpoint usa o método destroy do Sequelize para remover um usuário no banco.
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleteUser = await User.destroy(
+      { where: { id } },
+    );
+
+    console.log(deleteUser) // confira o que é retornado quando o user com o id é ou não encontrado;
+
+    return res.status(200).json({ message: 'Usuário excluído com sucesso!' });
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  }
+});
+
+module.exports = router;
+
+Por último, crie um arquivo index.js (código logo abaixo) na raiz do seu projeto. Teste e veja o comportamento de uma aplicação utilizando o Sequelize. Caso tenha alguma dúvida até aqui, na seção "Sequelize do 0" terá um vídeo demonstrando a criação de uma aplicação em Sequelize.
+index.js
+
+const express = require('express');
+const bodyParser = require("body-parser");
+
+const userController = require('./controllers/userController');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(bodyParser.json());
+
+app.use('/user', userController);
+
+app.listen(PORT, () => console.log(`Ouvindo na porta ${PORT}!`));
+
+
+O intuito do conteúdo de hoje é apresentar para vocês o Sequelize e suas funcionalidades. O importante é que vocês entendam as diferenças da forma que vocês faziam, antes do Sequelize, para essa nova forma, e onde devem usar.
+
+
+
+
+
+
+
+
+
+
 
 
 
