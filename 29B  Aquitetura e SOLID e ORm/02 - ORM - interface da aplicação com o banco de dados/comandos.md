@@ -58,3 +58,65 @@ const User = (sequelize, DataTypes) => {
 };
 
 module.exports = User;
+
+
+### O model fica responsável apenas por representar a estrutura do banco de dados
+### Com o Sequelize, essa lógica se centraliza nos controllers ou services
+
+### Com a migration criada, basta executarmos pelo CLI:
+- npx sequelize db:migrate
+### Caso queira reverter uma migration:
+-  npx sequelize db:migrate:undo
+
+### Se você quiser criar uma outra migration para adicionar a coluna phone na sua tabela Users , você pode criar um novo arquivo com o comando:
+-  npx sequelize migration:generate --name add-column-phone-table-users
+
+'use strict';
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    /**
+     * Add altering commands here.
+     *
+     * Example:
+     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
+     */
+  },
+
+  down: async (queryInterface, Sequelize) => {
+    /**
+     * Add reverting commands here.
+     *
+     * Example:
+     * await queryInterface.dropTable('users');
+     */
+  }
+};
+### enato criamos nosso codigo
+'use strict';
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+   await queryInterface.addColumn('Users', 'phone_num', {
+     type: Sequelize.STRING,
+   });
+  },
+
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.removeColumn('Users', 'phone_num');
+  }
+};
+## Em seguida rodamos o comando para executar a nossa nova migration:
+-  npx sequelize db:migrate
+
+###  E alteramos o model user.js para incluir a nova coluna phone :
+const User = (sequelize, DataTypes) => {
+  const User = sequelize.define("User", {
+  fullName: DataTypes.STRING,
+  email: DataTypes.STRING,
+  // aqui inserimos o datatype da coluna criada
+  phone_num: DataTypes.STRING,
+  });
+
+  return User;
+}
