@@ -132,6 +132,13 @@ Para criar um model, usamos o seguinte comando no cli (nao execute o comando aba
 
  npx sequelize model:generate --name NomeDoModel --attributes nomeDoAtributo:string
 
+ Alem de gerar o model, ele tambem gera uma migration que ira criar a tabela no banco de dados.não se preucupe, vamos aprender  sobre as migrations no proximo topico. Observe que passamos dois parametros para o comando:
+
+ - O paramentro `--name` se refere ao nome das colunas e os tipos de dados que ela contém. Não é preciso definir todas as colunas neste comando,é possivél adiciona-las direto no arquivo `model.js` gerado e na migration equivalente a este model.
+ - o paramentro `--atributes` se refere ao nome das colunas e os tipos de dados que ela contem.  nao é preciso defineir todas as colunas neste comando, é posivél adiciona-las direto no arquivo model.js gerado e na migration equivalente a este model.
+
+Vamos dar um exemplo para ficar mais evidente. Queremos criar uma tabela `Users` que contem dados de vários usuarios. o que fazemos primeiro é gerar um model que ira representar uma instancia de usuario, ou uma linha na tabela Users no nosso banco de dados (lembre-se vamos ver a tabela sendo criada no proximo tópico)
+
 
 
 
