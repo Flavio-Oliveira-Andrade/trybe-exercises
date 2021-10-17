@@ -1,0 +1,11 @@
+{
+  "name": "orm",
+  "version": "1.0.0",
+  "description": "\"metodo usando solid\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "\"foa12381@gmail.com\"",
+  "license": "ISC"
+}
