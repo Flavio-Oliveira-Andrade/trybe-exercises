@@ -44,3 +44,17 @@ Para criar um model, usamos o seguinte comando no cli (nao execute o comando aba
  npx sequelize model:generate --name NomeDoModel --attributes nomeDoAtributo:string
   O paramentro `--name` se refere ao nome das colunas e os tipos de dados que ela contém
   o paramentro `--atributes` se refere ao nome das colunas e os tipos de dados que ela contem
+
+- npx sequelize model:generate --name User --attributes fullName:string
+
+## faça amudança no model por funcão
+const User = (sequelize, DataTypes) => {
+  const User = sequelize.define("User", {
+    fullName: DataTypes.STRING,
+    email: DataTypes.STRING,
+  });
+
+  return User;
+};
+
+module.exports = User;

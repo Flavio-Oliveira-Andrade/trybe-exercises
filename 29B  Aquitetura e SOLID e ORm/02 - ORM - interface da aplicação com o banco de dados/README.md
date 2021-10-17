@@ -139,6 +139,68 @@ Para criar um model, usamos o seguinte comando no cli (nao execute o comando aba
 
 Vamos dar um exemplo para ficar mais evidente. Queremos criar uma tabela `Users` que contem dados de vários usuarios. o que fazemos primeiro é gerar um model que ira representar uma instancia de usuario, ou uma linha na tabela Users no nosso banco de dados (lembre-se vamos ver a tabela sendo criada no proximo tópico)
 
+- npx sequelize model:generate --name User --attributes fullName:string
+
+Depois de  rodar este comando, perceba que foi criado um arquivo `user.js` na pasta model, e na pasta migrations foi criado o arquivo `20210310124202-create-user.js`(os numeros, no inicio do nome do arquivo, significa a data e hora da criação dele, seguindo o formato yyy-mm-dd:hh:mm:ss). vamos focar no arquivo user.js por enquanto, perceba que o seguinte código esta presente
+
+models/user.js
+
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class User extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+    }
+  };
+  User.init({
+    fullName: DataTypes.STRING
+  }, {
+    sequelize,
+    modelName: 'User',
+  });
+  return User;
+};
+
+Como dito anteriormente, não iremos trabalhar com classes, mas sim com a função sequelize.define() , então substitua este código pelo seguinte:
+models/user.js
+
+const User = (sequelize, DataTypes) => {
+  const User = sequelize.define("User", {
+    fullName: DataTypes.STRING,
+    email: DataTypes.STRING,
+  });
+
+  return User;
+};
+
+module.exports = User;
+
+const User = (sequelize, DataTypes) => {
+  const User = sequelize.define("User", {
+    fullName: DataTypes.STRING,
+    email: DataTypes.STRING,
+  });
+
+  return User;
+};
+
+module.exports = User;
+
+Perceba que adicionamos uma nova coluna email no nosso model.
+Agora, a imagem abaixo mostra o nosso model e migration criados. Perceba que o nome do arquivo model é user.js , o nome da função model definida está no singular User e na migration a tabela foi nomeada como Users .
+
+Um ponto importante de mudança estrutural que o sequelize traz e que, da forma que aprendemos antes, sem o sequelize, nossa logica de validação, interações  com o banco de dados (get, insert, etc), entre outras, se centralizavam no model, Com o sequelize, essa  lógica se centraliza nos controllers ou services. O model fica apenas responsavel  por representar a estrutura do banco de dados para ajudar o sequelize  a realizar as operações . O mundo do Back-end e cheio de  diferentes  forma e filosofias para a organização de um codigo! Essaé uma delas!
+
+Nosso Model esta criado! Agora vamos passar para o proximo passo as migrations
+
 
 
 
