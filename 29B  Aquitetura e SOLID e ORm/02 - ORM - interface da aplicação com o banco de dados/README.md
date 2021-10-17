@@ -59,6 +59,16 @@ Usando o sequelize, voce  pode evitar a criação de queries  SQl e utilizar mod
 ***instalar Sequelize**
 Para começar, vamos iniciar uma aplicação node.js e intalar o sequelize:
 
+ - mkdir app-with-sequelize && cd app-with-sequelize
+ - npm init -y
+ - npm install sequelize
+
+ Atenção! Vá fazendo cada passo junto conosco, sao seus exercicios de fixação.
+ O primeiro passo para utilizar o sequelize é instalar um CLI que é responsavél por gerar e executar as operações. Alem de instalar CLI, precisamos installar tambem o mysql2, uma depedencia necessaria para usarmos o mysql. juntamente com o sequelize.
+
+- npm install sequelize-cli
+- npm install mysql2
+
 
 
 
