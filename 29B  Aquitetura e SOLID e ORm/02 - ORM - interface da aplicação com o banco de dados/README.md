@@ -66,8 +66,74 @@ Para começar, vamos iniciar uma aplicação node.js e intalar o sequelize:
  Atenção! Vá fazendo cada passo junto conosco, sao seus exercicios de fixação.
  O primeiro passo para utilizar o sequelize é instalar um CLI que é responsavél por gerar e executar as operações. Alem de instalar CLI, precisamos installar tambem o mysql2, uma depedencia necessaria para usarmos o mysql. juntamente com o sequelize.
 
+- npm install --save sequelize
 - npm install sequelize-cli
 - npm install mysql2
+
+## iniciando o sequelize
+depois  que instalamos o CLI, precisamos iniciar um projeto com sequelize. para isto, vamos executtar o seguinte comando dentro da pasta raiz:
+
+- npx sequelize-cli init
+
+## Esse comando irá criar as seguintes pastas
+- config: contem um arquivo de configuraçõa que "fala" para o CLI como conectar-se com o banco de dados;
+- models: contem todos os modelos da nossa aplicação
+- migrations: contem todos os arquivos de migração da nossa aplicação;
+- seeders: contem todas os arquivos de "seeds".
+
+### conectando ao banco de dados
+Agora só nos resta configurar o arquivo config.json gerado pelo init  do cli. Ao alterar esse arquivo, estamos configurando o acesso da aplicaçõ ao nosso banco de dados. vamos modificar somente o objeto development, não vamos nos preocupar com os demais:
+
+config/config.json
+
+{
+  "development": {
+    "username": "root",
+    "password": "",
+    "database": "orm_example",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+
+  // No resto do arquivo você vai encontrar as convenções para conectar o Sequelize em outros ambientes
+}
+
+Nota: se necessario, troque o user e a senha do exemplo pelos seus
+vamos entender melhor as informações que estamos passando:
+
+Usuário de acesso ao banco de dados;
+Senha de acesso ao banco de dados;
+Nome do banco de dados no qual queremos conectar;
+Host que estamos conectando - por ser local, utilizamos o 127.0.0.1 ;
+Dialect é, nada mais nada menos, qual banco estamos utilizando. Dito isso, passamos "mysql".
+
+Vale lembrar que passar as credencias dessa forma não é uma boa pratica, pois nossos dados de acesso ao banco de dados ficam totalmente visiveis para qualquer pessoa que tenha acesso ao codigo da nossa aplicação. mais a frente trataremos essa aplicaçã, para que seja utilizada usando variavei de ambiente.
+
+### Criando Banco de dados usando CLI do sequelize
+Agora que iniciamos uma aplicação do sequelize, podemos criar o banco de dados ORM_EXEMPLE que nomeamos no arquivo config.json  atraves deste comando
+
+-  npx sequelize db:create
+-  mysql -u root -p
+-  show databases;
+
+Confira que o banco orm_exemploi foi criado e voĉe nao precisou escrever uma linha de SQL para isto, essa é uma das primeiras vantagens que o sequelize nos fornece.
+Curiosidade : Hoje o Sequelize suporta os bancos MySQL , MariaDB , PostgreSQL , SQLite e Microsoft SQL Server .
+# Model
+Podemos verificar que dentro da pasta models criada, existe um arquivo index.js  . Este arquivo é gerado automaticamente pelo sequelize e possui um papel muito importante: estabelecer uma instancia de conexão entre os arquivos presentes na pasta model e o banco de dados relacional utilizando. Não Apague este arquivo, ele é necessario para operação do sequelize.
+
+Os models são a essencia do sequelize. Um model é uma abstração que representa uma linha na tabela em seu banco de dados  e diz ao sequelize varias coisas sobre essa entidade, como o nome da tabela no banco de dados e quais colunas ela possui(e seus tipos de dados). O model pode ser definido de duas formas:
+
+- Chamado pela Função `sequelize.define(name,atributo,options)`
+- Estendendo `Model` como uma classe e chamado `init(attibutes, options)`
+
+A segunda forma é a padrão para utilização do sequelize, gerada automaticamente quando utilizado os comandos do CLI, e é especifica para programação Orientada a Objetos. Como ainda não apredemos sobre este tipo de desenvolvimento, utilizaremos a primeira forma para definição de models, chamada pela função `sequelize.define()`.
+
+Para criar um model, usamos o seguinte comando no cli (nao execute o comando abaixo, ele é apenas um template de como criar um model):
+
+ npx sequelize model:generate --name NomeDoModel --attributes nomeDoAtributo:string
+
+
+
 
 
 
