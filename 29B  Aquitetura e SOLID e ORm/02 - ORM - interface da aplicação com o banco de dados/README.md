@@ -540,8 +540,173 @@ app.listen(PORT, () => console.log(`Ouvindo na porta ${PORT}!`));
 
 O intuito do conteúdo de hoje é apresentar para vocês o Sequelize e suas funcionalidades. O importante é que vocês entendam as diferenças da forma que vocês faziam, antes do Sequelize, para essa nova forma, e onde devem usar.
 
+# Boas Praticas
+
+Quando criamos o nosso Quando criamos o nosso arquivo config.json dentro da pasta config , vimos que as informações sensíveis, como credenciais de acesso ao banco de dados, estavam todas expostas no nosso código. 😱
+Só fizemos isso para fins didáticos. Como vocês já sabem, uma ótima prática é usar variáveis de ambiente para controlar coisas relacionadas à configuração geral da aplicação. Então, bora fazer isso!
+Iremos fazer a instalação do pacote dotenv :
+
+require('dotenv').config();
+
+module.exports = {
+  development: {
+    username: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
+    host: process.env.HOSTNAME,
+    dialect: 'mysql',
+  },
+  test: {
+    username: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
+    host: process.env.HOSTNAME,
+    dialect: 'mysql',
+  },
+  production: {
+    username: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
+    host: process.env.HOSTNAME,
+    dialect: 'mysql',
+  },
+};
+
+Note que, como estamos em um exercício de desenvolvimento, estamos assumindo que os três ambientes vão utilizar o banco de dados local do seu computador; Em aplicações mais complexas, no entanto, é importante que você utilize bancos de dados e configurações diferentes para cada ambiente.
+Crie o arquivo .env na raiz da sua aplicação e preencha as variáveis com as suas credenciais para acessar o MySQL.
+
+MYSQL_USER=root
+MYSQL_PASSWORD=senha_mysql
+MYSQL_DATABASE=orm_example
+HOSTNAME=localhost
 
 
+Modifique a linha 8 do arquivo models/index.js para apontar para o arquivo config.js :
+
+const config = require(__dirname + '/../config/config.json')[env]; // configuração antiga
+const config = require(__dirname + '/../config/config.js')[env];   // configuração nova
+
+# sequelize do zero Revisão
+# testes
+Para testarmos os Models criados com o sequelize , seguimos os memsos conceitos vistos anteriormnete: iremos isolar as operações de IO e utilizaremos bibliotecas para nos ajudar com os stubs e asseções.
+
+Antes de começar a realizar os testes, vamos instalar nossas depedencias de desenvolvimento como nas aulas anteriormente
+
+- npm i mocha chai sinon chai-http -D
+
+agora vamos alterar a linha abaixo em nosso package.json para executar nossos testes com o comando npm test como nas aulas anteriores
+- "mocha ./tests/**/*$NAME*.test.js --exit"
+Antes de partimos efetivamente para realização dos testes, Utilize o arquivo index.js na raiz do seu projeto. Nele, não esqueça de exporta a contante app para utilização com os testes
+
+// const express = require('express');
+// const bodyParser = require("body-parser");
+
+// const userController = require('./controllers/userController');
+
+// const app = express();
+// const PORT = process.env.PORT || 3000;
+
+// app.use(bodyParser.json());
+
+// app.use('/user', userController);
+
+// app.listen(PORT, () => console.log(`Ouvindo na porta ${PORT}!`));
+
+module.exports = app;
+
+Abaixo temos um exemplo de como podemos testar nosso controller de busca de pessoas usuarias que consome  nosso model:
+
+tests/integration/controllers/user.test.js
+
+const chai = require('chai');
+const { stub } = require('sinon');
+const chaiHttp = require('chai-http');
+
+chai.use(chaiHttp);
+
+const { expect } = chai;
+
+const app = require('../../../index');
+const { User } = require('../../../models');
+
+describe('Busca todos os usuários', () => {
+  describe('quando não existe nenhum usuário cadastrado', () => {
+    const findAllStub = stub(User, 'findAll');
+
+    before(() => {
+      findAllStub.resolves([]);
+    });
+
+    after(() => {
+      findAllStub.restore();
+    });
+
+    it('called User.findAll', async () => {
+      await chai.request(app)
+        .get('/user');
+
+      expect(User.findAll.calledOnce).to.be.equals(true);
+    });
+
+    it('o status é 200', async () => {
+      const result = await chai.request(app)
+        .get('/user');
+
+      expect(result.status).to.be.equals(200);
+    });
+
+    it('a resposta é um array', async () => {
+      const result = await chai.request(app)
+        .get('/user');
+
+      expect(result.body).to.be.an('array');
+    });
+
+    it('o array está vazio', async () => {
+      const result = await chai.request(app)
+        .get('/user');
+
+      expect(result.body).to.be.empty;
+    });
+  });
+});
+
+Se quisermos testar nosso model em si, podemos utilizar biblioteca especificas para nos ajudar nessa tarefa. Uma bastante utilizada é a Sequelize Test Helpers . Vamos ver um exemplo de como podemos utilizá-la:
+
+const {
+  sequelize,
+  dataTypes,
+  checkModelName,
+  checkPropertyExists,
+} = require('sequelize-test-helpers');
+
+const UserModel = require('../../../models/user');
+
+describe('O model de User', () => {
+  const User = UserModel(sequelize, dataTypes);
+  const user = new User();
+
+  describe('possui o nome "User"', () => {
+    checkModelName(User)('User');
+  });
+
+  describe('possui as propriedades "fullName" e "email"', () => {
+    ['fullName', 'email'].forEach(checkPropertyExists(user));
+  });
+});
+
+È possivel fazer essas asserções diretamente, porem esse modulo ja possui diversas funçãoes prontas para facilitar a escrita dos testes
+
+# Conclusão
+Vimos bastante conteudo Hoje? Explorando muitos conceitos e ferramentas que, de forma bem completa, nos permitem criar, alterar, configurar, e operar com um banco de dados da nossa aplicação utilizando codigo JavaScripts adicionavél ai nosso controller de versão. A ideia de buscar o dominio de cada uma dessas ferramentas pode parecer intimidadora agora, mas voĉe praticando isso bastante não hesite em voltar aqui futuramente caso precise reforça alguma explicação!
+
+# Cheat Sheet Aqui neste Repositório , preparamos um Cheat Sheet para que possa te ajudar no setup e na criação dos models, migrations e seeders !
+
+# Conteudo Bônus - Padrões de Projeto
+
+***Observação**:Essa seção mostrará alguns padroes que ajudarão no processo de organizaçãoe construção de uma aplicação.E uma parte extrea do conteudo, ou seja , nãoi é necessario compreender o que esta aqui prosseguir com os exercisios e aula ao vivo do dia.Porem, caso queira se aprofundar mais em sequelize, fica na sequencia, bons tópicos sobre este ORM
+
+# Nomenclatura
 
 
 
