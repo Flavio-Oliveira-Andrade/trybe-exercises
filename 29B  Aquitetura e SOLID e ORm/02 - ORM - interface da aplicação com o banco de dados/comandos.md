@@ -149,3 +149,36 @@ module.exports = {
 - npx sequelize db:seed:all
 - para reverter
 -  npx sequelize db:seed:undo:all
+
+},
+//       createdAt: {
+//         allowNull: false,
+//         type: Sequelize.DATE,
+           field: 'created_at', // a coluna será criada no banco com este nome
+//       },
+//       updatedAt: {
+//         allowNull: false,
+//         type: Sequelize.DATE,
+           field: 'updated_at', // a coluna será criada no banco com este nome
+//       }
+
+
+# Podemos, entrar na pasta src e executar estes comandos, que teremos êxito,
+ mas caso fosse uma aplicação maior, com mais camadas, aumentaríamos a complexidade de subir e configurar a aplicação. É neste momento que entra em cena o .sequelizerc . É um arquivo de configuração, que podemos utilizar caso desejamos substituir o caminho padrão das pastas migrations , models , seeders ou config . Dessa forma, podemos construir um código com uma arquitetura mais organizada.
+Para configurar este arquivo, primeiramente crie um arquivo com o nome .sequelizerc na raiz da aplicação com o seguinte conteúdo:
+
+const path = require('path');
+
+module.exports = {
+  'config': path.resolve('src', 'config', 'config.json'),
+  'models-path': path.resolve('src', 'models'),
+  'seeders-path': path.resolve('src', 'seeders'),
+  'migrations-path': path.resolve('src', 'migrations'),
+};
+
+Vamos entender melhor as informações que tem neste arquivo:
+path : É um módulo interno do Node que nos fornece alguns utilitários para trabalharmos com caminhos de arquivos e diretórios;
+config : Caminho para o arquivo de configuração;
+models-path : Caminho para o diretório de models ;
+seeders-path : Caminho para o diretório de seeders ;
+migrations-path : Caminho para o diretório de migrations .
