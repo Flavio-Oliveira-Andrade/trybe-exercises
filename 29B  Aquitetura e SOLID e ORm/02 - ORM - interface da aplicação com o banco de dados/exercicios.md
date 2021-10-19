@@ -56,3 +56,163 @@ Crie uma ordenação no endpoint GET /books para ordenar por ordem alfabética e
 Adicione, também, uma data de update nos atributos do livro que se altera sempre que o livro for atualizado.
 Escreva testes para os models criados;
 Escreva testes para os controllers do seu projeto isolando a camada de models .
+
+Gabarito dos exercícios
+A seguir encontra-se uma sugestão de solução para o exercício proposto.
+Solução
+index.js
+Copiar
+const express = require('express');
+const bodyParser = require('body-parser');
+
+const booksController = require('./controllers/booksController');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(bodyParser.json());
+
+app.get('/books', booksController.getAll);
+app.get('/book/:id', booksController.getById);
+app.post('/book', booksController.createNew);
+app.post('/book/:id', booksController.updateById);
+app.delete('/book/:id', booksController.deleteById);
+
+app.listen(PORT, () => console.log(`Ouvindo na porta ${PORT}!`));
+controllers/booksController.js
+Copiar
+const { Book } = require('../models');
+
+const getAll = async (req, res) => {
+  try {
+    const books = await Book.findAll();
+
+    res.status(200);
+    res.json(books);
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  }
+};
+
+const getById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const books = await Book.findByPk(id);
+
+    res.status(200);
+    res.json(books);
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  }
+};
+
+const createNew = async (req, res) => {
+  try {
+    const { title, author, pageQuantity = 0 } = req.body;
+
+    const book = await Book.create({
+      title,
+      author,
+      pageQuantity,
+    });
+
+    res.status(201);
+    res.json(book);
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  }
+};
+
+const updateById = async (req, res) => {
+  try {
+    const { title, author, pageQuantity = 0 } = req.body;
+    const { id } =  req.params;
+
+    const result = await Book.update(
+      {
+        title,
+        author,
+        pageQuantity,
+      },
+      { where: { id } },
+    );
+
+    res.status(200);
+    res.json(result);
+  } catch (err) {
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  }
+};
+
+const deleteById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const bookToDelete = await Book.findByPk(id);
+    await bookToDelete.destroy();
+
+    res.status(200);
+    res.json(bookToDelete);
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  }
+};
+
+module.exports = {
+  deleteById,
+  getAll,
+  getById,
+  updateById,
+  createNew,
+};
+migrations/nome_da_migration.js
+Copiar
+'use strict';
+
+module.exports = {
+  up: (queryInterface, DataTypes) => {
+    return queryInterface.createTable('Books', {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
+      title: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      author: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      pageQuantity: {
+        allowNull: true,
+        type: DataTypes.INTEGER,
+      },
+      createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
+    });
+  },
+
+  down: (queryInterface) => {
+    return queryInterface.dropTable('Books');
+  },
+};
+models/Book.js
+Copiar
+module.exports = (sequelize, DataTypes) => {
+  const Book = sequelize.define('Book', {
+    title: DataTypes.STRING,
+    author: DataTypes.STRING,
+    pageQuantity: DataTypes.INTEGER,
+  });
+
+  return Book;
+};
