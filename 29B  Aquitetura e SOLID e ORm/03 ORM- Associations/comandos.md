@@ -89,6 +89,8 @@ module.exports = {
 
 hasMany : tem muitos
 hasOne  : tem um
+belongsTo : pertence a um
+belongsMany : pertence a varios
 
 ### criação da migrations/tabela
 npx sequelize db:migrate
@@ -99,3 +101,11 @@ npx sequelize db:migrate
 
 ### para executar a criação dos seeders .
  npx sequelize db:seed:all
+
+### para remover as tabelas antigas, depois recriá-las e por último, executar as seeders:
+
+ npx sequelize db:migrate:undo:all
+ npx sequelize db:migrate
+ npx sequelize db:seed:all
+
+ Lembre-se: foreignKey sempre se refere ao model em que chamamos belongsToMany , enquanto otherKey se refere ao model com o qual estamos criando a associação.

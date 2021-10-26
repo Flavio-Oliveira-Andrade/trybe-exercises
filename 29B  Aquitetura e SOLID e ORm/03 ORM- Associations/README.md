@@ -348,3 +348,543 @@ No caso dos relacionamentos 1:n, não ha grande diferençã na maneira como cria
 Mudamos apenas o método de declaração da associação para hasMany, indicando cada emplo[ pode possuir muitos adress. Observe o id 4 no resultado e vej a diferençã que ocorre quando é usado hasOne ou hasMany.
 No model adresses, por sua vez, não ha necessidade de alterarmos nada, pois cada adress continua  pertecendo a apenas um employee, o que justifica o uso do método `beleongsT`.
 Acompanhe na pratica como fazer relacionamento 1:1 (Um para Um )e 1:N (um para muitos )
+
+## Utilizando os relacionamentos
+Em seguida, veremos os dois métodos de utilização dos relacionamentos:
+- Eager loading, ou carregamento antecipado (que utilizamos no exemplo acima),
+- lazy loading, ou carregamento tardio.
+
+nesse caso, vamos aprender a utilizar cada um desses dois modos e como eles acontecem no codigo, usando o relacionamento de 1:N que criamos acima:
+
+## Eager Loading
+
+Esse método carrega todos os dados na mesma request. Logo, ao utilizar eager loading, todas as informações são trazidas, idepedente se vamos usa-las ou não. Rstye modo é util para cenarios em que sabemos, ja de antemão, que sempre vamos precisar de todos os dados das entidades envovildas.
+
+Antes de prosseguimos, vamos alterar as informações na tabela. Para isso, utilizaremos os seeders ja criados.
+Abra o arquivo xxxxx employees.js dentro da pasta seeders apague tudoque aviamos colocado antes e copie o codigo abaixo
+
+module.exports = {
+  up: async (queryInterface, _Sequelize) => {
+    return queryInterface.bulkInsert('Employees',
+      [
+        { first_name: 'Marcos', last_name: 'Zuck', age: 49 },
+        { first_name: 'Fred', last_name: 'Mercurio', age: 19 },
+        { first_name: 'Ayrton', last_name: 'Keno', age: 51 },
+        { first_name: 'Robin', last_name: 'Mathias', age: 63 },
+        { first_name: 'Antonio', last_name: 'Augusto', age: 18 },
+      ],
+      {},
+    );
+  },
+
+  down: async (queryInterface, _Sequelize) => {
+    return queryInterface.bulkDelete('Employees', null, {});
+  },
+};
+
+Depois, abra o arquivo XXXXXXXXXXXXXX-addresses.js dentro da pasta seeders , limpe-o e copie o código abaixo:
+
+module.exports = {
+  up: async (queryInterface, _Sequelize) => {
+    return queryInterface.bulkInsert('Addresses',
+      [
+        {
+          city: 'Belo Horizonte',
+          street: 'Rua Florida',
+          number: 1080,
+          employee_id: 1,
+        },
+        {
+          city: 'São Paulo',
+          street: 'Avenida Paulista',
+          number: 1980,
+          employee_id: 2,
+        },
+        {
+          city: 'Fortaleza',
+          street: 'Rua das Enseadas',
+          number: 95,
+          employee_id: 3,
+        },
+        {
+          city: 'Belo Horizonte',
+          street: 'Rua Andaluzita',
+          number: 131,
+          employee_id: 4,
+        },
+        {
+          city: 'Belo Horizonte',
+          street: 'Rua Vicente Alvarenga',
+          number: 80,
+          employee_id: 1,
+        },
+        {
+          city: 'Curitiba',
+          street: 'Rua Fria',
+          number: 101,
+          employee_id: 5,
+        },
+      ],
+      {},
+    );
+  },
+
+  down: async (queryInterface, _Sequelize) => {
+    return queryInterface.bulkDelete('Addresses', null, {});
+  },
+};
+
+Por último, utilize o comando abaixo para remover as tabelas antigas, depois recriá-las e por último, executar as seeders:
+
+ npx sequelize db:migrate:undo:all
+ npx sequelize db:migrate
+ npx sequelize db:seed:all
+
+ Vamos ver agora, como utilizar o Eager loading na prática. Voltaremos no arquivo index.js e criaremos mais uma rota:
+
+// const express = require('express');
+// const { Address, Employee } = require('./models');
+
+// const app = express();
+
+// app.get('/employees', async (_req, res) => {
+//   try {
+//    const employees = await Employee.findAll({
+//      include: { model: Address, as: 'addresses' },
+//    });
+
+//     return res.status(200).json(employees);
+//   } catch (e) {
+//     console.log(e.message);
+//     res.status(500).json({ message: 'Ocorreu um erro' });
+//   };
+// });
+
+app.get('/employees/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const employee = await Employee.findOne({
+        where: { id },
+        include: [{ model: Address, as: 'addresses' }],
+      });
+
+    if (!employee)
+      return res.status(404).json({ message: 'Funcionário não encontrado' });
+
+    return res.status(200).json(employee);
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  };
+});
+
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => console.log(`Ouvindo na porta ${PORT}`));
+
+Agora faça uma requisição do tipo `get` para o endpoint localhost , e veja como o resultado é retornado.
+Além das propiedades que ja citamos, o campo `include` pode manipularos dados que serão retornados. Por exemplo, se  não quisermos o acesso ao numero de endereço, bastaria alterar o codigo, adicianando a propiedade `attributes`  e dentro dela o que queremos fazer.
+
+// const express = require('express');
+// const { Address, Employee } = require('./models');
+
+// const app = express();
+
+// app.get('/employees', async (_req, res) => {
+//   try {
+//    const employees = await Employee.findAll({
+//      include: { model: Address, as: 'addresses' },
+//    });
+
+//     return res.status(200).json(employees);
+//   } catch (e) {
+//     console.log(e.message);
+//     res.status(500).json({ message: 'Ocorreu um erro' });
+//   };
+// });
+
+// app.get('/employees/:id', async (req, res) =>  {
+//   try {
+//     const { id } = req.params;
+//     const employee = await Employee.findOne({
+//         where: { id },
+           include: [{
+             model: Address, as: 'addresses', attributes: { exclude: ['number'] },
+           }],
+//       });
+
+//     if (!employee)
+//       return res.status(404).json({ message: 'Funcionário não encontrado' });
+
+//     return res.status(200).json(employee);
+//   } catch (e) {
+//     console.log(e.message);
+//     res.status(500).json({ message: 'Algo deu errado' });
+//   };
+// });
+
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => console.log(`Ouvindo na porta ${PORT}`));
+
+dessa maneira o campo Number será excluido do return da requisição  { exclude: ['number'] }
+
+### Lazy loading
+Agora vamos  ver como funciona a outra forma de carregar dados de associção: o lazy lodings. Esse Metodo consiste, basicamente, em não especificar uma propiedade includes no momento de realizar query no banco de dados. Dessa forma , cria -se a possibilidade de dois usos para o mesmo endpoint.
+
+Para utilizarmos duas ações diferentes em um endpoint, iremos usar a query string `includeAdresses`, na qual, caso o parâmetro dela seja true os endereços  daquele funcionario, também serão retornados
+
+imagine que exista a função `getAdress` que tem como responsabilidade buscar todos os endereços de acordo com o `employee_id`.
+
+// const express = require('express');
+// const { Address, Employee } = require('./models');
+
+// const app = express();
+
+// app.get('/employees', async (_req, res) => {
+//   try {
+//    const employees = await Employee.findAll({
+//      include: { model: Address, as: 'addresses' },
+//    });
+
+//     return res.status(200).json(employees);
+//   } catch (e) {
+//     console.log(e.message);
+//     res.status(500).json({ message: 'Ocorreu um erro' });
+//   };
+// });
+
+// app.get('/employees/:id', async (req, res) => {
+//   try {
+//     const { id } = req.params;
+       const employee = await Employee.findOne({ where: { id } });
+
+//     if (!employee)
+//       return res.status(404).json({ message: 'Funcionário não encontrado' });
+
+       if (req.query.includeAddresses === 'true') {
+         const addresses = await Address.findAll({ where: { employeeId: id } });
+         return res.status(200).json({ employee, addresses });
+       }
+
+//     return res.status(200).json(employee);
+//   } catch (e) {
+//     console.log(e.message);
+//     res.status(500).json({ message: 'Algo deu errado' });
+//   };
+// });
+
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => console.log(`Ouvindo na porta ${PORT}`));
+
+
+Reinicie a aplicação e realiza uma requisição do tipo GET para o endpoint http://localhost:3000/employees/1?includeAddresses=true . Depois, retire o ?includeAddresses=true e veja seu retorno.
+Como pudemos ver, o lazy loading é muito útil em situações em que não sabemos se vamos, de fato, precisar buscar todas as informações de uma só vez. Aqui, se tivéssemos utilizado eager loading , teríamos buscado os dados dos funcionários mesmo quando includeAddresses não era informado, e precisaríamos excluir a chave addresses do resultado do banco caso esse parâmetro não fosse informado. Com o lazy loading , podemos carregar apenas os dados do funcionário, e carregar os dados dos endereços apenas quando necessário, economizando recursos do banco.
+
+### Relacionamento de N:N
+
+Nos relacionamentos de N:N. existem algumas significativas ao se criar as associações. Esse tipo de relacionamento pode ser visto tambem como dois relacionamentos um para muitos (1:n) ligados por uma tabela intermediaria, chamada de tabela de `Junção`, ela guarda as informações de como as tabelas se relacionam entre si.
+
+Representação de um banco 1:1
+
+Esse banco possui 3 tabelas  Users , Books e UserBooks . A tabela UserBooks possui um relacionamento N:N com as demais tabelas. Desta maneira, podemos inferir que:
+
+A tabela Users guarda as informações de cada usuário.
+A tabela Books guarda as informações de cada livro.
+A tabela UserBooks irá agir como uma tabela de junção , guardando a relação de quais pessoas usuárias possuem quais livros. Nessa tabela uma pessoa usuária pode possuir vários livros, enquanto um livro pode pertencer a várias pessoas usuárias. Assim cadastramos o livro uma única vez na tabela Books , assim como a pessoa usuária na tabela Users , e este livro vai poder ser associado de forma livre a várias pessoas usuárias, assim como uma única pessoa usuária poderá ser associado a vários livros, graças a essa tabela.
+
+Como criamos uma associação que possa por 3 tabelas
+
+Primeiro, vamos criar o model de Users :
+
+// models/User.js
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define('User', {
+    userId: { type: DataTypes.INTEGER, primaryKey: true },
+    firstName: DataTypes.STRING,
+    lastName: DataTypes.STRING,
+    age: DataTypes.INTEGER,
+  },
+  {
+    timestamps: false,
+    tableName: 'Users',
+    underscored: true,
+  });
+
+  return User;
+};
+
+// models/Book.js
+module.exports = (sequelize, DataTypes) => {
+  const Book = sequelize.define('Book', {
+    bookId: { type: DataTypes.INTEGER, primaryKey: true },
+    name: DataTypes.STRING,
+    releaseYear: DataTypes.INTEGER,
+    numberPages: DataTypes.INTEGER,
+  },
+  {
+    timestamps: false,
+    tableName: 'Books',
+    underscored: true,
+  });
+
+  return Book;
+};
+
+// models/UserBook.js
+module.exports = (sequelize, _DataTypes) => {
+  const UserBook = sequelize.define('UserBook',
+    {},
+    { timestamps: false },
+  );
+
+  UserBook.associate = (models) => {
+    models.Book.belongsToMany(models.User, {
+      as: 'users',
+      through: UserBook,
+      foreignKey: 'book_id',
+      otherKey: 'user_id',
+    });
+    models.User.belongsToMany(models.Book, {
+      as: 'books',
+      through: UserBook,
+      foreignKey: 'user_id',
+      otherKey: 'book_id',
+    });
+  };
+
+  return UserBook;
+};
+
+Primeiro de tudo, note que não temos nenhum atributo nesse local. isso é possivel porque quando estabelecemos os relacionamentos  usando `UserBook` como tabela de associação, o sequelize ja entende que esse model precisa ter os dois IDS da tabels sendo associadas.
+
+Depois, temos um novo tipo de relacionamneto: o `belongToMany`. Esse  relacionamento cria um relacionamneto do tipo N:N utilizando o model especificado na opção  through como tabela de associação. temos tembem o  o lias  daquela associação, na chave  ase, por ultimo, temos os paramentros foreignKey e otherKey . Esses dois parâmetros dizem ao Sequelize qual campo utilizar na tabela de associação para identificar cada uma das entidades.foreignKey e otherKey . Esses dois parâmetros dizem ao Sequelize qual campo utilizar na tabela de associação para identificar cada uma das entidades.
+
+Lembre-se: foreignKey sempre se refere ao model em que chamamos belongsToMany , enquanto otherKey se refere ao model com o qual estamos criando a associação.
+
+Para testar a aplicação, você deve fazer as devidas alterações nos controllers , criar as migrations e os seeders .
+Para criar as migrations, utilize os seguintes comandos:
+
+ npx sequelize migration:generate --name create-books
+ npx sequelize migration:generate --name create-users
+ npx sequelize migration:generate --name create-user-books
+
+ E copie o conteúdo abaixo para seus respectivos arquivos de migration, create-books , create-users e create-user-books :
+
+ // cole esse código dentro do arquivo da migration "books"
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('Books', {
+      bookId: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+        field: 'book_id',
+      },
+      name: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      releaseYear: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        field: 'release_year',
+      },
+      numberPages: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        field: 'number_pages',
+      },
+    });
+  },
+
+  down: async (queryInterface, _Sequelize) => {
+    await queryInterface.dropTable('Books');
+  },
+};
+
+// cole esse código dentro do arquivo da migration "users"
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('Users', {
+      userId: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+        field: 'user_id',
+      },
+      firstName: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        field: 'first_name',
+      },
+      lastName: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        field: 'last_name',
+      },
+      age: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+      },
+    });
+  },
+
+  down: async (queryInterface, _Sequelize) => {
+    await queryInterface.dropTable('Users');
+  },
+};
+
+// cole esse código dentro do arquivo da migration "user-books"
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('UserBooks', {
+      userId: {
+        type: Sequelize.INTEGER,
+        field: 'user_id',
+        references: {
+          model: 'Users',
+          key: 'user_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+        primaryKey: true,
+      },
+      bookId: {
+        type: Sequelize.INTEGER,
+        field: 'book_id',
+        references: {
+          model: 'Books',
+          key: 'book_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+        primaryKey: true,
+      },
+    });
+  },
+
+  down: async (queryInterface, _Sequelize) => {
+    await queryInterface.dropTable('UserBooks');
+  },
+};
+
+Depois disso, teremos que criar as seeds com informações para podermos enfim, testar nossa nova association:
+
+ npx sequelize seed:generate --name books
+ npx sequelize seed:generate --name users
+ npx sequelize seed:generate --name user-books
+
+
+Copie os códigos abaixo para seus respectivos arquivos dentro da pasta seeders :
+
+// cole esse código dentro do arquivo da seed "books"
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    return queryInterface.bulkInsert('Books',
+      [
+        { name: 'Livro A', release_year: 2020, number_pages: 111 },
+        { name: 'Livro B', release_year: 2019, number_pages: 222 },
+        { name: 'Livro C', release_year: 2018, number_pages: 333 },
+        { name: 'Livro D', release_year: 2017, number_pages: 444 },
+      ],
+      {},
+    );
+  },
+
+  down: async (queryInterface, _Sequelize) => {
+    await queryInterface.bulkDelete('Books', null, {});
+  },
+};
+
+// cole esse código dentro do arquivo da seed "users"
+
+module.exports = {
+  up: async (queryInterface, _Sequelize) => {
+    return queryInterface.bulkInsert('Users',
+      [
+        {
+          first_name: 'Bárbara',
+          last_name: 'Silva',
+          age: 16,
+        },
+        {
+          first_name: 'Carlos',
+          last_name: 'Santos',
+          age: 24,
+        },
+        {
+          first_name: 'Danilo',
+          last_name: 'Henrique',
+          age: 32,
+        },
+      ],
+      {},
+    );
+  },
+
+  down: async (queryInterface, _Sequelize) => {
+    await queryInterface.bulkDelete('Users', null, {});
+  },
+};
+
+
+// cole esse código dentro do arquivo da seed "user-books"
+
+module.exports = {
+  up: async (queryInterface, _Sequelize) => {
+    return queryInterface.bulkInsert('UserBooks',
+      [
+        { user_id: 1, book_id: 1 },
+        { user_id: 1, book_id: 3 },
+        { user_id: 2, book_id: 1 },
+        { user_id: 2, book_id: 2 },
+        { user_id: 3, book_id: 1 },
+        { user_id: 3, book_id: 2 },
+        { user_id: 3, book_id: 3 },
+      ],
+      {},
+    );
+  },
+
+  down: async (queryInterface, _Sequelize) => {
+    await queryInterface.bulkDelete('UserBooks', null, {});
+  },
+};
+
+
+Depois, utilize o comando abaixo para executar as migrations e as seeds:
+
+ npx sequelize db:migrate
+ npx sequelize db:seed:all
+
+ Para fazer a requisição, bastaria acrescentar ao index.js as seguintes linhas:
+
+ const { Book, User } = require('./models');
+// ...
+app.get('/usersbooks/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findOne({
+      where: { userId: id },
+      include: [{ model: Book, as: 'books', through: { attributes: [] } }],
+    });
+
+    if (!user)
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+
+    return res.status(200).json(user);
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  };
+});
+
+Agora, faça uma requisição do tipo GET para o endpoint localhost:3000/usersbooks/1 e verifique a resposta para o usuário.
+Nota: a propriedade through: { attributes: [] } deve estar presente, pois sem ela, em cada book , apareceriam todos seus respectivos users . Tente fazê-lo sem e veja a diferença no resultado!
+
+// ...
