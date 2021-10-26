@@ -317,3 +317,34 @@ Agora inicie o servidor, como instalamos o nodemon anteriormente, iremos utiliza
  npx nodemon index.js
 
  Por último, faça uma requisição do tipo GET para o endpoint localhost:3000/employees e verifique a resposta, onde em cada um dos empregados (employees), aparecerá o respectivo endereço (address).
+
+
+# Relacionamento 1:N
+No caso dos relacionamentos 1:n, não ha grande diferençã na maneira como criamos as associações, Caso cada employee possuissee varios adress, bastaria declarar seu model da seguinte forma:
+
+// models/Employee.js
+// module.exports = (sequelize, DataTypes) => {
+//   const Employee = sequelize.define('Employee', {
+//     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+//     firstName: DataTypes.STRING,
+//     lastName: DataTypes.STRING,
+//     age: DataTypes.INTEGER,
+//   },
+//   {
+//     timestamps: false,
+//     tableName: 'Employees',
+//     underscored: true,
+//   });
+
+//   Employee.associate = (models) => {
+     Employee.hasMany(models.Address,
+       { foreignKey: 'employee_id', as: 'addresses' });
+//   };
+
+//   return Employee;
+// };
+
+- hasMany : tem muitos
+Mudamos apenas o método de declaração da associação para hasMany, indicando cada emplo[ pode possuir muitos adress. Observe o id 4 no resultado e vej a diferençã que ocorre quando é usado hasOne ou hasMany.
+No model adresses, por sua vez, não ha necessidade de alterarmos nada, pois cada adress continua  pertecendo a apenas um employee, o que justifica o uso do método `beleongsT`.
+Acompanhe na pratica como fazer relacionamento 1:1 (Um para Um )e 1:N (um para muitos )
