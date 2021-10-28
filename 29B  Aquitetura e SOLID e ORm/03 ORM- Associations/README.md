@@ -888,3 +888,374 @@ Agora, faça uma requisição do tipo GET para o endpoint localhost:3000/usersbo
 Nota: a propriedade through: { attributes: [] } deve estar presente, pois sem ela, em cada book , apareceriam todos seus respectivos users . Tente fazê-lo sem e veja a diferença no resultado!
 
 // ...
+### Transações
+
+Uma trasanção  simboliza uma unidade de trabalho indivisivel executada do banco de dados de forma confiavel e idepedente de outras trasanções. As ações dessa unidade de trabalho não podem ser mescladas com ações de outras  trasanções. O conceito de uma unidade de trabalho indivisivel( ou todo o trabalho é feito, ou nada é) è chamado de atomicidade . de trabalho atomica e indivisivel dessa forma.
+
+Em outras palavras, uma transação de banco de dados relacional pode conter um ou mais comandos SQL, que por sua vez deverá ser executada por completo para ter sucesso, ou seja, caso algum comando dentro do bloco dê errado, a transação falha.
+
+Trazendo para um cenário real, o exemplo mais comum para explicar uma transação seria uma transferência de dinheiro entre duas contas correntes. Vamos imaginar que o usuário A vai transferir R$ 100,00 para o usuário B.
+Note que, para realizar a transferência, você precisa de duas operações. Você precisa de uma operação para retirar R$ 100,00 da conta da pessoa usuária A e uma operação para adicionar R$ 100,00 na conta da pessoa usuária B. Esse processo completo é uma operação atômica . Ou as duas acontecem, ou nada acontece.
+Imagine que, quando executamos essa transferência, por algum motivo não foi possível adicionar os R$ 100,00 na conta da pessoa usuária B. Porém já havíamos removido os R$ 100,00 da conta da pessoa usuária A. Teríamos um baita problema, correto? Com o uso de transações, as operações só seriam executadas no banco de dados caso todas as operações resultassem em sucesso. Caso alguma operação falhe, automaticamente o banco de dados reverte as demais operações. Com isso garantimos a integridade dos dados.
+
+Uma transação de banco de dados relacional, por definição, deve ser atômica, consistente, isolada e durável, mais conhecida pela sigla ACID :
+A tomicidade: todas as operações definidas na transação devem ser concluídas com sucesso. Se algo falhar, a transação inteira falha;
+C onsistência: todas as regras do banco de dados devem ser respeitadas, ou seja, estrutura de tabelas, chaves estrangeiras, campos restritos etc.;
+I solamento: uma transação não pode interferir em outra transação. Cada transação deve se comportar de forma totalmente isolada das demais transações do banco de dados;
+D urabilidade: uma vez que a transação foi finalizada, os dados ali modificados devem ser armazenados de forma permanente, ou seja, só será possível alterá-los caso uma nova transação seja executada posteriormente.
+Resumindo, sempre que possível, tente utilizar transações, pois irá fornecer dados mais confiáveis, diminuindo as chances de erro. O Sequelize não usa, por default, transações. Portanto, precisa-se configurá-lo para utilizar as transações.
+
+## Caso de uso
+Imagine a seguinte situação, temos um endpoint onde em um mesmo formulário precisamos preencher a tabela de empregados e a tabela de endereço, mas precisamos garantir a atomicidade, ou seja precisamos cadastrar o usuário e o endereço de uma vez e caso alguma coisa falhe precisamos reverter essa operação.
+
+// const express = require('express');
+const bodyParser = require('body-parser');
+// const { Address, Employee } = require('./models');
+
+// const app = express();
+app.use(bodyParser.json());
+
+// app.get('/employees', async (_req, res) => {
+//   try {
+//    const employees = await Employee.findAll({
+//      include: { model: Address, as: 'addresses' },
+//    });
+
+//     return res.status(200).json(employees);
+//   } catch (e) {
+//     console.log(e.message);
+//     res.status(500).json({ message: 'Ocorreu um erro' });
+//   };
+// });
+
+// ...
+
+app.post('/employees', async (req, res) => {
+  try {
+    const { firstName, lastName, age, city, street, number } = req.body;
+
+    const employee = await Employee.create({ firstName, lastName, age });
+
+    await Address.create({ city, street, number, employeeId: employee.id });
+
+    return res.status(201).json({ message: 'Cadastrado com sucesso' });
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  }
+});
+
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => console.log(`Ouvindo na porta ${PORT}`));
+
+O problema da operação acima é que caso ocorra qualquer tipo de erro na operação de salvar o endereço no banco, o usuário vai ficar cadastrado de forma inconsistente já que o registro na tabela de usuário foi concluído com sucesso. Para garantir que vamos salvar os dois objetos ou não vamos salvar nada, usamos o recurso de transação.
+Existem dois tipos de transações dentro do
+` Sequelize: Unmanaged transactions e Managed transactions .`
+
+## Unmanaged transactions
+
+Para esse tipo de transaction , é preciso indicar manualmente a circunstância em que uma transação deve ser finalizada ou revertida. Exemplo de código:
+Observação : para a execução desse código, é necessário que o arquivo de configuração config.json , seja passado para JavaScript config.js , igual demonstrado no conteúdo do dia 29.2 . Isso para que se tenha acesso as informações contidas dentro desse arquivo.
+
+
+// const express = require('express');
+// const bodyParser = require('body-parser');
+const Sequelize = require('sequelize');
+
+// const { Addresses, Employees } = require('./models');
+const config = require('./config/config');
+
+// const app = express();
+// app.use(bodyParser.json());
+
+const sequelize = new Sequelize(config.development);
+
+// ...
+
+app.post('/employees', async (req, res) => {
+  // Primeiro iniciamos a transação
+  const t = await sequelize.transaction();
+
+  try {
+    const { firstName, lastName, age, city, street, number } = req.body;
+
+    // Depois executamos as operações
+    const employee = await Employee.create(
+      { firstName, lastName, age },
+      { transaction: t },
+    );
+
+    await Address.create(
+      { city, street, number, employeeId: employee.id },
+      { transaction: t },
+    );
+
+    // Se chegou até essa linha, quer dizer que nenhum erro ocorreu.
+    // Com isso, podemos finalizar a transação usando a função `commit`.
+    await t.commit();
+
+    return res.status(201).json({ message: 'Cadastrado com sucesso' });
+  } catch (e) {
+    // Se entrou nesse bloco é porque alguma operação falhou.
+    // Nesse caso, o sequelize irá reverter as operações anteriores com a função rollback, não sendo necessário fazer manualmente
+    await t.rollback();
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  }
+});
+// ...
+
+## Managed transactions
+O próprio Sequelize controla quando deve finalizar ou reverter uma transação:
+Exemplo de código:
+
+// ...
+app.post('/employees', async (req, res) => {
+  try {
+    const { firstName, lastName, age, city, street, number } = req.body;
+
+    const result = await sequelize.transaction(async (t) => {
+      const employee = await Employee.create({
+        firstName, lastName, age
+      }, { transaction: t });
+
+      await Address.create({
+        city, street, number, employeeId: employee.id
+      }, { transaction: t });
+
+      return res.status(201).json({ message: 'Cadastrado com sucesso' });
+    });
+
+    // Se chegou até aqui é porque as operações foram concluídas com sucesso,
+    // não sendo necessário finalizar a transação manualmente.
+    // `result` terá o resultado da transação, no caso um empregado e o endereço cadastrado
+  } catch (e) {
+    // Se entrou nesse bloco é porque alguma operação falhou.
+    // Nesse caso, o sequelize irá reverter as operações anteriores com a função rollback, não sendo necessário fazer manualmente
+    console.log(e.message);
+    res.status(500).json({ message: 'Algo deu errado' });
+  }
+});
+
+Transações deixam a confiabilidade do seu código, já que respeita o princípio da atomicidade, evitando você popular o banco de dados de forma inconsistente. Sempre que for fazer algum tipo de operação que envolva duas ou mais tabelas é bastante recomendado usar uma transação para envelopar as operações de escrita. Isso serve para operações de UPDATE e DELETE também.
+
+
+## Testes
+Para não deixar de praticar, vamos testar nossa transação " E importante acentuar que, em um contexto onde não pretendemos testar isoladamente nossas camadas, ou seja , ja testamos `models , controllers e services `
+
+
+então nos resta trabalhar em cima de testes de integração , aqui especificamente, pensando o contrato da requisição .
+Antes de começar a realizar os testes, vamos instalar nossas dependências de desenvolvimento como nas aulas anteriores:
+
+npm i mocha chai chai-http sinon -D
+
+### Vamos alterar a linha em nosso `pack.json`
+Para executar nossos testes com o `comando npm test` como nas aulas anteriores, so que nesse  caso, passando uma variavel de ambiente, que ja explicaremos adiante:
+
+"scripts": {
+  ...
+  "test": "NODE_ENV=test mocha ./tests/**/*$NAME*.test.js --exit"
+},
+
+E mais uma coisa, no `index.js`, faça uma alteração na linha de escolha da configuração do sequelize e adicione a informação do `id` do employee criando ao retorno da requisição Post para pasta /employees, como no exemplo(idepedentemente de eestar usando `unmanaged transaction ou managed transaction):
+
+
+// index.js
+
+// ...
+
+/*
+  Essa linha será importante para que consigamos isolar nosso teste
+  utilizando a configuração `test` do seu `config.{js | json}`
+*/
+const sequelize = new Sequelize(
+  process.env.NODE_ENV === 'test' ? config.test : config.development
+);
+
+// ...
+
+// app.post('/employees', async (req, res) => {
+//   const t = await sequelize.transaction();
+
+//   try {
+//     const { firstName, lastName, age, city, street, number } = req.body;
+
+//     const employee = await Employee.create(
+//       { firstName, lastName, age },
+//       { transaction: t },
+//     );
+
+//     await Address.create(
+//       { city, street, number, employeeId: employee.id },
+//       { transaction: t }
+//     );
+
+//     await t.commit();
+
+    return res.status(201).json({
+      id: employee.id, // esse dado será nossa referência para validar a transação
+      message: 'Cadastrado com sucesso'
+    });
+
+//   } catch (e) {
+//     await t.rollback();
+//     console.log(e.message);
+//     res.status(500).json({ message: 'Algo deu errado' });
+//   }
+// });
+
+// ...
+
+// module.exports = app;
+
+Note, que uma vez que estaremos fazendo um teste de integração que pressupões um comportamento no banco de dados atraves do consumo de API (ou seja, um test que, apos o consumo da API espera um resultado que pode ser validado através da leitura do banco de dados via propia API), precisamos isolar uma banco de dados no mesmo modelo do anterior. Esse banco nao deve gerar prejuizo ao seu ambiente de desenvolvimento e tampouco para seu ambiente de produção.
+
+Caso você ainda tenha configurado um, é só alterar o campo `test.database` do seu arquivo `config.js() complementando as demais dados, caso na esteja preenchidos:
+
+Para inicializar o banco de teste, rode os seguintes comandos, passando a variável de ambiente que deseja usar (no nosso caso, NODE_ENV=test ):
+
+NODE_ENV=test npx sequelize-cli db:create
+NODE_ENV=test npx sequelize-cli db:migrate
+NODE_ENV=test npx sequelize-cli db:seed:all
+
+Caso queira remover o banco para começar novamente, utilize: NODE_ENV=test npx sequelize-cli db:drop .
+Agora, crie uma pasta ./tests/integration onde testaremos a criação de Employees , por tanto crie um arquivo employeeCreation.test.js . No nosso teste, pensando o exemplo que acabamos de ver, vamos assumir o seguinte teste de mesa :
+
+
+### Testando a rota POST /employees
+
+- Acessarei meu `rest-client` favorito (PostMan, Insomnia, HTTPie, etc...)
+  - Para um caso de sucesso:
+    - Farei uma requisição `POST` com os dados corretos para meu
+      end-point `/employee`;
+    - Aguardo uma resposta com status `201 - Created`;
+    - Essa resposta deve conter também um atributo `id`, no corpo;
+    - Essa resposta deve conter também um atributo `message`,
+      no corpo, com a mensagem `Cadastrado com sucesso`;
+    - Farei uma requisição `GET` utilizando esse `id` para meu
+      end-point `/employee/:id`;
+    - Aguardo uma resposta com status `200 - OK`;
+    - Essa resposta deve conter também um atributo `addresses`,
+      no corpo, com pelo menos um item.
+  - Para um caso de falha:
+    - Farei uma requisição `POST` com os dados incorretos para meu
+      end-point `/employee`;
+    - Aguardo uma resposta com status `500 - Internal Server Error`;
+    - Essa resposta deve conter também um atributo `message`,
+      no corpo, com a mensagem `Algo deu errado`;
+
+      Dessa forma, podemos criar o seguinte teste:
+
+      // ./tests/integration/employeeCreation.test.js
+
+const chai = require('chai');
+const { stub } = require('sinon');
+const chaiHttp = require('chai-http');
+
+chai.use(chaiHttp);
+
+const { expect } = chai;
+
+const app = require('../../index');
+
+// omitir os `console.log`s dos testes gerando um `stub` pra função
+const consoleLogStub = stub(console, 'log');
+before(()=> consoleLogStub.returns(true));
+after(()=> consoleLogStub.restore());
+
+describe('Rota POST /employees', () => {
+  describe('quando os dados do `body` são válidos', () => {
+    let postEmployee;
+    let getEmployee;
+
+    before(async () => {
+      try {
+        postEmployee = await chai.request(app)
+          .post('/employees')
+          .send({
+            firstName: "Rodrigo",
+            lastName: "Oliveira",
+            age: 30,
+            city: "TrybeCity",
+            street: "Rua Teste",
+            number: 42
+          });
+
+        const { body : { id } } = postEmployee;
+
+        getEmployee = await chai.request(app)
+          .get(`/employees/${id}`);
+      } catch (error) {
+        console.error(error.message);
+      }
+    });
+
+    it('retorna 201 - Created', async () => {
+      const { status } = postEmployee;
+
+      expect(status).to.be.equals(201);
+    });
+
+    it('retorna um atributo `id`, que é um número', async () => {
+      const { body: { id } } = postEmployee;
+
+      expect(typeof id).to.be.equals("number");
+    });
+
+    it('retorna uma mensagem `Cadastrado com sucesso`', async () => {
+      const { body: { message } } = postEmployee;
+
+      expect(message).to.be.equals('Cadastrado com sucesso');
+    });
+
+    it('é possível consultar a pessoa criada através do `id` retornado', async () => {
+      const { body: { id: postId } } = postEmployee;
+      const { body: { id: getId } } = getEmployee;
+
+      expect(postId).to.be.equals(getId);
+    });
+
+    it('essa consulta também retornou um atributo `addresses`, com pelo menos um item', async () => {
+      const { body: { addresses } } = getEmployee;
+
+      expect(addresses.length).to.be.greaterThanOrEqual(1);
+    });
+  });
+
+  describe('quando os dados do `body` não são válidos', () => {
+    let postEmployee;
+
+    before(async () => {
+      try{
+        // removendo city
+        postEmployee = await chai.request(app)
+          .post('/employees')
+          .send({
+            firstName: "Rodrigo",
+            lastName: "Oliveira",
+            age: 30,
+            street: "Rua Teste",
+            number: 42
+          });
+      } catch (error) {
+        console.error(error.message);
+      }
+    });
+
+    it('retorna 500 - Internal Server Error', async () => {
+      const { status } = postEmployee;
+
+      expect(status).to.be.equals(500);
+    });
+
+    it('retorna uma mensagem `Algo deu errado`', async () => {
+      const { body: { message } } = postEmployee;
+
+      expect(message).to.be.equals('Algo deu errado');
+    });
+  });
+});
+
+
+Para testar, utilize npm test . Não se esqueça que a API não deve estar rodando no momento do test (o próprio chai-http , subirá sua api).
+Se tudo correr bem, seus testes devem passar sem problemas!

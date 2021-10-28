@@ -1,8 +1,18 @@
+const { config } = require('dotenv');
 const express = require('express');
 const {Address, Employee} = require('./models');
 const { Book, User } =  require('./models')
 
 const app = express();
+
+/*
+  Essa linha será importante para que consigamos isolar nosso teste
+  utilizando a configuração `test` do seu `config.{js | json}`
+*/
+
+const sequelize = new sequelize(
+  process.env.NODE_ENV === 'test' ? config.test : config.development
+);
 
 app.get('/employees', async (_req, res) => {
   try {

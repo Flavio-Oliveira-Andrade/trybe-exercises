@@ -10,10 +10,12 @@ module.exports = {
   },
   "test" : {
     "username": "root",
-    "password": null,
-    "database": "database_test",
+    "password": "123456789",
+    "database": "orm_assoc_test_dbt",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    // adicione essa linha a sua configuração para omitir mensagens de log no orm
+    "logging": false
   },
   "production" :{
     "username": "root",

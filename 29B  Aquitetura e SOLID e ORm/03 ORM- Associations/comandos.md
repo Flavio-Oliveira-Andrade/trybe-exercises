@@ -3,6 +3,10 @@
  npx sequelize-cli init
  npm i dotenv
  npm i express
+ npm i mocha chai chai-http sinon -D
+ "scripts": {  ...
+  "test": "NODE_ENV=test mocha ./tests/**/*$NAME*.test.js --exit"
+},
 
 ### inicia o projeto Mysql com as configurações e pastas iniciais
 npm i sequelize-cli
