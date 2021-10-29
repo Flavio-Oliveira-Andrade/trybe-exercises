@@ -39,4 +39,5 @@ DESCRIBE nome_da_tabela;
 CREATE DATABASE nome_do_banco_de_dados;
 -- EX: CREATE DATABASE trybe;
 
- npm install express
+npm install express
+npm install ejs
