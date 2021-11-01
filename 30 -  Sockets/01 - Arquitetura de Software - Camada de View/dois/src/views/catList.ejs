@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <title>gATOS</title>
+</head>
+<body>
+  <% if (message) {%>
+    <h1> <%= message %> </h1>
+  <% } %>
+
+  <% if (cats) {%>
+    <ul style="background-color: antiquewhite;">
+      <% cats.forEach(cat => {%>
+        <li>Nome: <%= cat.name %> - Idade: <%= cat.age %> </li>
+        <% }) %>
+    </ul>
+  <% } %>
+  <form method="POST" action="/cats">
+    <input type="text" name="name"/>
+    <input type="number" name="age"/>
+    <button type="submit" >Cria novo gato !</button>
+  </form>
+
+</body>
+</html>
