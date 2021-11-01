@@ -1,0 +1,255 @@
+
+@font-face {
+  font-family: 'PoetsenOne';
+  src: url('./fonts/PoetsenOne.ttf');
+}
+/*========== VARIABLES CSS ====================================================================================================*/
+:root {
+  /*========== COLORS =========================================================================================================*/
+  --first-color: #9D4BFF;
+  /* --first-color: #4D49BF; */
+  --first-color-dark: #314279;
+  /* --dark-color-lighten: #F2F5FF; */
+  --title-color: #F2A20C;
+
+  /*========== FONT / TYPOGRAPHY ===========================================================================================*/
+  --body-font: 'PoetsenOne', sans-serif;
+  --normal-font-size: .938rem;
+  --h1-font-size: 1.375rem;
+  --h3-font-size: 1.125rem;
+  --small-font-size: .75rem;
+}
+
+body, button {
+  margin: 0;
+  padding: 0;
+  font-family: var(--body-font);
+  font-size: var(--normal-font-size);
+}
+
+ /* RECIPES PAGE ===========================================================================================================*/
+.Cards {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.recipes {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-left: 10px;
+}
+
+.recipe {
+  width: 200px;
+  height: 230px;
+  background-color: var(--first-color-dark);
+  border-radius: 1rem;
+  overflow-y: hidden;
+  cursor: pointer;
+  margin: 15px 5px 0 5px;
+}
+
+.recipe:hover {
+  box-shadow: 1px 2px 8px 2px #4D49BF;
+}
+
+.recipe img {
+  position: absolute;
+  margin-left: -75px;
+  margin-top: -60px;
+  width: 150px;
+  border-radius: 40px;
+  filter: drop-shadow(5px 10px 15px rgba(8,9,13,.4));
+}
+
+.recipeTitle {
+  font-family: var(--body-font);
+  font-size: var(--h1-font-size);
+  color: var(--title-color);
+  margin-bottom: .5rem;
+  transform: translateY(4.0rem);
+  text-align: center;
+}
+
+.recipeImg,
+.recipeData,
+.recipeTitle {
+  transition: .5s;
+}
+
+.recipe:hover .recipeImg {
+  transform: translateY(-4.5rem);
+}
+
+.recipe:hover .recipeData {
+  transform: translateY(4.8rem);
+}
+
+.categoriesBtns {
+  display: flex;
+}
+
+.categoriesBtns button {
+  cursor: pointer;
+}
+
+/* RECIPES IN PROGRESS PAGE ===========================================================================================================*/
+.completedRecipe {
+  text-decoration: line-through solid black;
+  color:pink;
+}
+
+.titleButtons {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.titleButtons h1 {
+  margin-right: 50px;
+}
+
+.titleButtons button {
+  margin-left: 2px;
+  cursor: pointer;
+}
+
+.likeShareBtns {
+  display: flex;
+  justify-content: space-around;
+}
+
+/*  ====================================================================================================================================*/
+
+/* SHAREBUTTONS COMPONENT ===========================================================================================================*/
+.showMsg {
+  position: absolute;
+  margin-left: -10px;
+  margin-top: 15px;
+}
+
+.hideMsg {
+  display: none;
+}
+
+/*  ====================================================================================================================================*/
+
+/* DONE RECIPE PAGE ===========================================================================================================*/
+.doneCard {
+  border: solid black 1px;
+  /* height: 143px;
+  width: 333px; */
+}
+
+.doneImg {
+  width: 165px;
+  height: 143px;
+}
+
+/* .doneArea, .doneCategory {
+  display: inline-block;
+  /* flex-direction: column;
+} */
+
+/* RECOMMENDED RECIPES COMPONENENT ===========================================================================================================*/
+
+.recommendedRecipes {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.slider {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 850px;
+}
+
+.recommendedImg {
+  width: 300px;
+  margin: 30px 30px -10px 30px;
+  border-radius: 40px;
+  filter: drop-shadow(5px 10px 15px rgba(8,9,13,.4));
+}
+
+.recommendedTitle {
+  font-family: var(--body-font);
+  font-size: var(--h3-font-size);
+  color: var(--title-color);
+}
+
+.left-arrow {
+  position: absolute;
+  top: 40%;
+  left: 3px;
+  font-size: 3rem;
+  color: #000;
+  cursor: pointer;
+  user-select: none;
+  z-index: 1;
+}
+
+.right-arrow {
+  position: absolute;
+  top: 40%;
+  right: 3px;
+  font-size: 3rem;
+  color: #000;
+  cursor: pointer;
+  user-select: none;
+  z-index: 1;
+}
+
+.imgTitle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.slide {
+  display: none;
+  /* opacity: 0; */
+  transition: all 1.5s ease;
+}
+
+.active {
+  display: block;
+  /* opacity: 1; */
+  height: 380px;
+  border-radius: 10px;
+  transform: scale(1.08);
+  transition: all 1.5s ease;
+}
+
+
+/*  ====================================================================================================================================*/
+/* DETAILS PAGE ===========================================================================================================*/
+.btnFinishNone {
+  display: none;
+  cursor: pointer;
+}
+
+.btnFinish {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  cursor: pointer;
+}
+
+/*  ====================================================================================================================================*/
+/* PROFILE PAGE ===========================================================================================================*/
+
+.buttonsInProfile {
+  display: grid;
+}
+
+.buttonsInProfile button {
+  cursor: pointer;
+}
+/*  ====================================================================================================================================*/

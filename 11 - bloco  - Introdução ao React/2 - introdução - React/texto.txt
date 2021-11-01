@@ -1,0 +1,54 @@
+
+O React é uma das bibliotecas JavaScript de criação de interfaces mais utilizadas no mundo.
+Ela foi criada e é mantida pelo próprio Facebook . Veja seu site oficial aqui .
+Nas próximas semanas, você irá aprofundar seus conhecimentos em React .
+Com muito esforço e dedicação, você chegará no nível de uma pessoa que programa React fluentemente.
+
+HTML permite que você de estrutura para suas paginas
+CSS permite que você de stylo para sua pagina
+JavaScript permite que você de logica para suas paginas
+React escrevendo menos fazer paginas muito mais complexa
+
+Vamos ver a diferencia de React e Java Scripts , e depois vamos ver um pouco  sobre classes. ao
+final do dia  vamos ter todas as informações para um componente basico em React!
+
+conceitos iniciais
+
+saber a melhor forma de installar um gerenciador de pacote
+inicializar um projeto em React
+utilizar JSX no React
+
+utilizar o rReactDom.render() para renderizar elementos numa pagina web
+Ultilizar o Import para usar codigo externo junto ao seu
+
+isso é importante porque
+como dito , o React é a principal biblioteca  de construção de UI altuamente. mas por que?
+quando falamos em react estamos geralmente nos referindo a todo ecossistema que envolve
+produtividade e escalabilidade e envolve
+
+React
+JSX
+Webpack
+Flux/Redux
+axios/fetch
+jest/Mocha
+
+a lista acima mosta algumas tecnologias que fazem parte desse eco sistema .
+e que permite criar aplicações web de alta qualidade .
+
+hello word em react , temos fundamentos para saber usar
+react em classes , pedaços logicos , jsx .html java scripts
+como react cria dom no brauser , exercicios de fixação , nao pode parar  e nem falhar
+
+o que é npm e npx
+npm . node package manager . gerencia pacote de codigos no node .
+npm init = inicia o projeto
+npm install  --save-dev  jest = dizendo para salvar este pacotes nas depedencias de desenvolvimentos
+pacote sera instalado para desenvolvimentos
+
+gitignore . node_modules
+
+npx = so executa o codigo que esta la no pocote  = creat react app
+
+
+const element = <h1>Hello, world!</h1>;

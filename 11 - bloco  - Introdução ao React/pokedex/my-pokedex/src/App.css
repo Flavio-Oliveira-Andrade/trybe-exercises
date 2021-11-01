@@ -1,0 +1,13 @@
+.App{
+  display: grid;
+  grid-template-rows: 5;
+  grid-template-columns:8 ;
+  grid-auto-flow: 10;
+
+}
+
+div{
+  border: 1px gray solid;
+  width:150;
+  margin-bottom: 10px;
+}
