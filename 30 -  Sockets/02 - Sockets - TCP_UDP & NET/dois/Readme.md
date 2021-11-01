@@ -55,3 +55,32 @@ Esta camada realiza a conversão dos formatos dos dados, de forma que sejam util
 O funcionamento, no dispositivo emissor, é da camada 7 até a 1. A camada de cima (7) vai passar dados para a de baixo (6), que fará o chamado "encapsulamento" dos dados, acrescentando informações de controle que dizem respeito a ela.
 Assim, vai ocorrendo o encapsulamento dos dados camada a camada, da 7 para a 1. Começamos com dados e terminamos com bits, que serão transmitidos pelo meio físico (camada 1).
 Quando a informação chega ao dispositivo de rede receptor ocorre o processo inverso, conhecido como "desencapsulamento". Os bits recebidos passam de camada para camada até se tornarem dados novamente.
+
+### TCP IP
+Apesar de o modelo OSI ser a referência para as redes e toda sua nomenclatura, a arquitetura TCP/IP é que implementa esse modelo na prática e está em uso hoje em dia, tanto nas redes internas (intranets) quanto na internet. A arquitetura TCP/IP é composta por apenas quatro camadas (formando a pilha da estrutura do protocolo). As camadas 5, 6 e 7 do modelo OSI foram mescladas para formar a camada de "Aplicação" do TCP/IP.
+Já as camadas 3 e 4 do modelo OSI são similares às camadas 2 e 3 do TCP/IP, inclusive a camada de transporte do TCP/IP tem o mesmo nome, porém a camada 3 do modelo OSI (rede) no TCP/IP é chamada de "Internet".
+Por fim, as camadas 1 e 2 do modelo OSI foram mescladas no TCP/IP para formar a camada de acesso aos meios ou acesso à rede. Veja a figura a seguir:
+
+No TCP/IP não costumamos nos referir pelos números das camadas e sim pelos nomes delas, pois quando nos referimos pelo número da camada estamos falando do modelo OSI.
+
+### REsumindo tudo o que falamos
+- o Modelo OSi possui sete camadas
+- o TCP/IP esta dividido em quatro camadas
+- As camadas 1 e 2 do modelo OSI estão agregadas na camada 1 do TCP/IP ou, como é chamada, camada de acesso aos Meios;
+- A camada 3 do modelo OSi (Redes) é chamada de Camada de transporte
+- As camadas 5,6 e7 do  modelo OSI são agregadas em uma so camada no TCO/IP, a qual é chamada de Camada de Apliucação
+
+### TCP e UDP
+
+Nos protocolos TCP e UDP existe a camada 4 do modelo OSI (camada de transporte) e define-se nela como uma determinada informação é transmitida na rede.
+Por essa convenção, numa máquina existem, teoricamente, 65.536 (2 elevado a 16) portas TCP que podem ser usadas pelas mais diversas aplicações/serviços (lembrando que as portas são virtuais, não existem físicamente no hardware). Lembra-se do nosso famoso " http://localhost:3000"? Pois bem, temos ai o protocolo HTTP, o endereço da nossa máquina, o localhost , ou 127.0.0.1 , e a nossa porta: 3000 .
+Mas, voltando às nossas portas, poderíamos ter 65.536 aplicações/APIs distintas, executando simultaneamente na nossa máquina. Além das portas TCP, também temos, teoricamente, 65.536 portas UDP.
+
+### TCP
+
+No TCP, no estabelecimento de ligação entre o server e o cliente há um “pré-acordo” entre cliente e servidor denominado de Three Way Handshake ( SYN , SYN-ACK , ACK ). A máquina que está requisitando conexão à outra manda um pedido de sincronização (SYNchronize); a máquina receptora confirma esse recebimento (ACKnowledge) e responde com seu pedido de sincronização (SYNchronize), que é respondido pela máquina requisitante com uma confirmação (ACKnowledge). Basicamente, é como uma conversa:
+
+- Cliente: `SYN` Quero me conectar!
+- Servidor: `ACK` Mensagem recebida!
+- Servidor: `SYN` Vamos nos conectar!
+- Cliente: `ACK` Mensagem recebida!
