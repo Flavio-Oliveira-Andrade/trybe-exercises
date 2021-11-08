@@ -108,3 +108,150 @@ Agora, se você iniciar novamente seu projeto, verá uma mensagem no console.log
 Obs.: Uma conexão socket tem um ciclo de vida que começa quando um socket é aberto e encerrado quando o socket é fechado, geralmente ao fechar ou recarregar uma página. Entenderemos melhor sobre isso ao decorrer do conteúdo.
 Finalizamos nossa primeira etapa, temos um back-end preparado para receber conexões socket.io e um front-end capaz de se conectar ao socket. Na próxima seção vamos aprender como fazer troca de mensagens entre client e servidor através de eventos.
 © Trybe 2021
+
+## Escutando e emitindo eventos customizados
+
+O socket.io possibilita uma comunicação entre cliente-servidor através de eventos. Tanto o cliente como o servidor podem emitir e escutar eventos customizados.
+Para demonstrar isso, vamos fazer nosso primeiro exemplo. Implementar um botão que emite um evento PING e fazer com que o back-end escute esse evento.
+
+// ...
+
+// io.on('connection', (socket) => {
+// console.log(`Usuário conectado. ID: ${socket.id}`);
+
+  socket.on('ping', () => {
+    console.log(`${socket.id} emitiu um ping!`);
+  });
+// });
+
+// ...
+Vale lembrar que criamos sempre os eventos dentro de connection . No código acima estamos criando o evento personalizado da maneira mais simples possível. Basta colocarmos o nome que queremos dentro do método .on() e pronto, já temos nosso evento personalizado!
+A função socket.on() cria um listener , ou seja, uma forma de detectar quando algum cliente emitir um evento personalizado para o servidor. No caso, criamos um listener para o evento ping . Podemos fazer um paralelo da função socket.on com a função document.addEventLintener que faz o registro de um listener de eventos do DOM como o clique em um botão ou ao digitar algo em uma caixa de texto.
+Por falar em eventos de DOM, vamos agora fazer um botão e adicionar um listener ao evento de clique para enviar o evento ping para o servidor.
+index.html
+Copiar
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO - trybe</title>
+  </head>
+  <body>
+    <button id='pingButton'>PING</button>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const button = document.querySelector('#pingButton');
+
+      button.addEventListener('click', (e) => {
+        socket.emit('ping');
+        return false;
+      });
+    </script>
+  </body>
+
+</html>
+Agora sim, nosso front-end está emitindo um evento para o nosso back-end através da função socket.emit . Perceba agora no terminal que será exibido uma mensagem parecida com essa:
+Copiar
+YIOksDTBcqbN-X1mAAAJ emitiu um ping!
+Nosso trabalho ainda não acabou, no entanto. Por hora, só temos um evento sendo emitido pelo cliente e sendo detectado pelo servidor através de um listener que executa uma função callback para exibir a mensagem ping no terminal.
+O próximo passo será emitir um novo evento pong para todas as outras conexões socket abertas.
+
+## Enviando mensagens do back-end para o front-end
+Uma forma de enviarmos uma mensagem do servidor para o clientes usando o método emit():
+
+socket.emit('Nome do seu evento', {
+  propriedade: 'Do seu objeto',
+  enviado: 'Para o cliente da conexão atual'});
+
+  Então, se quisermos mandar uma mensagem para o cliente assim que ele se conectar, basta fazermos:
+index.js
+
+// ...
+// io.on('connection', (socket) => {
+    socket.emit('ola', 'Que bom que você chegou aqui! Fica mais um cadin, vai ter bolo :)');
+
+//  socket.on('ping', () => {
+//    console.log(`${socket.id} emitiu um ping!`);
+//  });
+});
+// ...
+
+
+Note que usamos uma string para enviar uma mensagem, mas podemos usar outros tipos de dados, como um número, uma data, um objeto, entre outros tipos.
+O primeiro parâmetro da função é o nome do evento, enquanto o segundo conterá os dados enviados para o cliente, que deve estar escutando pelo nome do evento que, nesse caso é ola .
+index.html
+Copiar
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO - trybe</title>
+  </head>
+  <body>
+    <button id='pingButton'>PING</button>=
+    <ul id='messages'></ul>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+      // const button = document.querySelector('#pingButton');
+      // button.addEventListener('click', (e) => {
+      //   socket.emit('ping');
+      //   return false;
+      // });
+
+      // cria uma `li` e coloca dentro da `ul` com `id` mensagens
+      const createMessage = (message) => {
+        const messagesUl = document.querySelector('#messages');
+        const li = document.createElement('li');
+        li.innerText = message;
+        messagesUl.appendChild(li);
+      }
+
+      // Quando nosso evento `ola` for emitido, vamos pegar a string mensagem enviada pelo nosso evento e passar para a função `createMessage`
+      socket.on('ola', (mensagem) => createMessage(mensagem));
+    </script>
+  </body>
+</html>
+Agora faça um teste, abra uma nova aba em uma segunda janela. Note, que cada cliente que se conecta ao servidor recebe uma mensagem de boas-vindas. Temos nossa primeira comunicação do servidor para o cliente utilizando socket.emit . Porém, ao apertar nosso botão PING nada acontece ainda. Vamos modificar para que o listener do evento ping emita um evento pong para todos os clientes.
+index.js
+Copiar
+// ...
+
+// io.on('connection', (socket) => {
+//  console.log(`Usuário conectado. ID: ${socket.id}`);
+//
+//  socket.emit('ola', 'Que bom que você chegou aqui! Fica mais um cadin, vai ter bolo :)');
+
+// socket.on('ping', () => {
+//  console.log(`${socket.id} emitiu um ping!`);
+    io.emit('pong', `${socket.id} enviou um ping!`); // essa linha envia um aviso para o cliente que o ping chegou.
+//  });
+// });
+
+// ...
+Note, que dentro do listener do evento ping , usamos a função io.emit , em vez de socket.emit . Vamos entender a diferença entre essas duas chamadas um pouco mais a frente.
+Entretanto, a mensagem que saiu do servidor ainda não é exibida na tela do cliente, para isso vamos definir um listener para o evento pong do lado do cliente utilizando o socket.on .
+index.html
+Copiar
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO - trybe</title>
+    <script src="/socket.io/socket.io.js"></script>
+
+  </head>
+  <body>
+    <button id='pingButton'>PING</button>
+    <ul id='messages'></ul>
+  </body>
+  <script>
+    // const socket = io();
+
+    // ...
+
+    // Quando o evento `pong` for emitido pelo servidor, vamos pegar a string mensagem enviada e passar para a função `createMessage`
+    socket.on('pong', (mensagem) => createMessage(mensagem));
+  </script>
+</html>
+Agora, observe que cada vez que você clica no botão PING, uma mensagem de PONG é enviada pelo back-end. Dessa forma que fazemos a troca de mensagens básicas entre servidor e cliente usando socket.io. Reserve um tempo para revisar tudo até esse ponto antes de seguir com os próximos exemplos e conceitos.
+
