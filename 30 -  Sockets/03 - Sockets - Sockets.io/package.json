@@ -1,0 +1,11 @@
+{
+  "name": "03---sockets---sockets.io",
+  "version": "1.0.0",
+  "description": "o tema de hoje sobre uma ferramenta: ums rctenção de sockets, uma forma nova e pratica de desenvolver funcionalidades do mundo real sem muita dor de cabeça. Apresentando-lhes o **socket-oi**",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
