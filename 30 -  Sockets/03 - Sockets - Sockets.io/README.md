@@ -354,3 +354,158 @@ app.use(express.static(__dirname + '/public'));
 // ...
 Pronto, agora temos um código mais refatorado tanto no back-end como no front-end. Teste a aplicação para ver se tudo continua funcionando.
 Tudo certo? Vamos seguir com um novo exemplo do uso de sockets.
+
+## construindo um chat com socket.io
+
+Agora que entendemos o básico sobre socket.io, vamos construir um exemplo mais próximo do mundo real. Vamos fazer um chat funcional onde todas as pessoas que entrarem na página poderão mandar mensagens em um chat público, algo similar a uma conversa de um grupo de WhatsApp.
+Até o final desta seção, teremos uma chat funcional como a da imagem abaixo.
+Além disso, poderemos testar também com quantas janelas quisermos do nossa chat!
+
+
+Crie um arquivo sockets/chat.js para estruturar nossos eventos para o chat e adicionar a sua chamada no index.js.
+sockets/chat.js
+Copiar
+module.exports = (io) => io.on('connection', (socket) => {
+});
+index.js
+Copiar
+// const express = require('express');
+// const app = express();
+// const http = require('http').createServer(app);
+//
+// const io = require('socket.io')(http, {
+//   cors: {
+//     origin: 'http://localhost:3000', // url aceita pelo cors
+//     methods: ['GET', 'POST'], // Métodos aceitos pela url
+//   },
+// });
+//
+
+// require('./sockets/ping')(io);
+require('./sockets/chat')(io);
+
+// ...
+Crie agora o HTML, CSS e Javascript do cliente.
+public/chat.html
+Copiar
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO - trybe</title>
+    <link rel="stylesheet" href="./css/chat.css">
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="messageInput" autocomplete="off" /><button>Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src='./js/chat.js'></script>
+  </body>
+</html>
+public/css/chat.css
+Copiar
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font: 13px Helvetica, Arial;
+}
+
+form {
+  background: #000;
+  padding: 3px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+form input {
+  border: 0;
+  padding: 10px;
+  width: 90%;
+  margin-right: 0.5%;
+}
+
+form button {
+  width: 9%;
+  background: rgb(130, 224, 255);
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+#messages {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#messages li {
+  padding: 5px 10px;
+}
+
+#messages li:nth-child(odd) {
+  background: #eee;
+}
+public/js/chat.js
+Copiar
+const socket = window.io();
+
+const form = document.querySelector('form');
+const inputMessage = document.querySelector('#messageInput');
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  socket.emit('clientMessage', inputMessage.value);
+  inputMessage.value = '';
+  return false;
+});
+Esse código javascript determina que ao clicar no botão submit do formulário, será enviado um evento clientMessage com a mensagem preenchida no campo com id messageInput . Vamos preparar nosso back-end para receber este evento.
+sockets/chat.js
+Copiar
+// module.exports = (io) => io.on('connection', (socket) => {
+  socket.on('clientMessage', (message) => {
+    console.log(`Mensagem ${message}`);
+  });
+// });
+Agora faça, um teste. Abra a nova página pela url localhost:3000/chat.html e teste enviar uma mensagem. A mensagem que foi enviada chega no servidor e é exibida no console.log. Interessante, não é mesmo? Mas e se a gente quiser que a mensagem apareça no navegador, o que devemos fazer? Vamos emitir um outro evento chamado serverMessage com a mensagem saindo do servidor para todos os clientes que possuírem uma conexão socket aberta.
+sockets/chat.js
+Copiar
+// module.exports = (io) => io.on('connection', (socket) => {
+  socket.on('clientMessage', (message) => {
+    console.log(`Mensagem ${message}`);
+    io.emit('serverMessage', message);
+  });
+// });
+Interessante, mas ainda não temos a mensagem sendo renderizada no nosso front-end. Isso aconteceu, pois, não colocamos um listener para capturar o evento serverMessage que é emitido pelo back-end como uma resposta para o evento clientMessage . Vamos fazer isso agora.
+public/js/chat.js
+Copiar
+// const socket = window.io();
+//
+// const form = document.querySelector('form')
+// const inputMessage = document.querySelector('#mensagemInput')
+// form.addEventListener('submit', (e) =>{
+//   e.preventDefault();
+//   socket.emit('clientMessage', inputMessage.value);
+//   inputMessage.value = '';
+//   return false;
+// });
+
+const createMessage = (message) => {
+  const messagesUl = document.querySelector('#messages');
+  const li = document.createElement('li');
+  li.innerText = message;
+  messagesUl.appendChild(li);
+};
+
+socket.on('serverMessage', (message) => createMessage(message));
+Agora, sim, quando o evento serverMessage é disparado pelo back-end, o mesmo é detectado pelo cliente através do sokect.on('serverMessage') que dispara uma callback com o parâmetro message e chama a função createMessage que adiciona um elemento li com o valor da variável message no elemento ul com o id messages .
+Faça um teste abrindo várias janelas do seu navegador lado a lado e testando o envio de mensagem. Para facilitar você pode usar um plugin do chrome chamado Tab Resize - split screen layouts , que possibilita abrir várias janelas do navegador em um formato de grid.
+Desenvolvemos nosso primeiro chat. Na próxima seção vamos entender um pouco melhor como controlar eventos que são disparados automaticamente.
+© Trybe 2021
+·
+Manual da Pessoa Estudante
