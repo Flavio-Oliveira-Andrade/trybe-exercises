@@ -255,3 +255,102 @@ Copiar
 </html>
 Agora, observe que cada vez que você clica no botão PING, uma mensagem de PONG é enviada pelo back-end. Dessa forma que fazemos a troca de mensagens básicas entre servidor e cliente usando socket.io. Reserve um tempo para revisar tudo até esse ponto antes de seguir com os próximos exemplos e conceitos.
 
+## Refatorando
+
+Para distribuir melhor nosso código em diferentes arquivos podemos refatorar toda a parte de definição do socket para um arquivo a parte usando o conceito de inversão de dependência do SOLID. Vamos criar um diretório chamando sockets e adicionar um arquivo chamado ping.js .
+sockets/ping.js
+Copiar
+module.exports = (io) => {
+  io.on('connection', (socket) => {
+
+    socket.emit('ola', 'Que bom que você chegou aqui! Fica mais um cadin, vai ter bolo :)');
+
+    socket.on('ping', () => {
+      console.log(`${socket.id} emitiu um ping!`);
+      io.emit('pong', `${socket.id} enviou um ping!`); // essa linha envia um aviso para o cliente que o ping chegou.
+    });
+  });
+};
+E vamos tirar do arquivo index.js todo o código movido e substituir por um require.
+index.js
+Copiar
+// const express = require('express');
+// const app = express();
+// const http = require('http').createServer(app);
+//
+// const io = require('socket.io')(http, {
+//   cors: {
+//     origin: 'http://localhost:3000', // url aceita pelo cors
+//     methods: ['GET', 'POST'], // Métodos aceitos pela url
+//   },
+// });
+//
+
+require('./sockets/ping')(io);
+
+// app.get('/', (req, res) => {
+//   res.sendFile(__dirname + '/index.html');
+// });
+
+// http.listen(3000, () => {
+//   console.log('Servidor ouvindo na porta 3000');
+// });
+Vamos agora a uma forma de refatorar nosso código HTML. Comece criando um arquivo para isolar o javascript do HTML. Atente-se a criar o arquivo dentro de um diretório public.
+public/js/ping.js
+Copiar
+const socket = window.io();
+
+const button = document.querySelector('#pingButton');
+button.addEventListener('click', (e) => {
+  socket.emit('ping');
+  return false;
+});
+
+// cria uma `li` e coloca dentro da `ul` com `id` mensagens
+const createMessage = (message) => {
+  const messagesUl = document.querySelector('#messages');
+  const li = document.createElement('li');
+  li.innerText = message;
+  messagesUl.appendChild(li);
+};
+
+// Quando nosso evento `ola` for emitido, vamos pegar a string mensagem enviada pelo nosso evento e passar para a função `createMessage`
+socket.on('ola', (mensagem) => createMessage(mensagem));
+socket.on('pong', (mensagem) => createMessage(mensagem));
+Note que na linha 1, mudamos a chamada da função io() para window.io() , isso serve para enfatizar que a função io é uma função injetada ao objeto window do DOM da página. Dessa forma, conseguimos seguir utilizando nosso socket, mas agora em um arquivo separado. Portanto, devemos reorganizar nosso HTML como no exemplo abaixo.
+index.html
+Copiar
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO - trybe</title>
+  </head>
+  <body>
+    <button id='pingButton'>PING</button>
+
+    <ul id='messages'></ul>
+  </body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src='./js/ping.js'></script>
+</html>
+Agora só precisamos fazer nosso back-end prover acesso aos arquivos dentro do diretório public adicionando a seguinte linha de código.
+index.js
+Copiar
+// const express = require('express');
+// const app = express();
+// const http = require('http').createServer(app);
+//
+// const io = require('socket.io')(http, {
+//   cors: {
+//     origin: 'http://localhost:3000', // url aceita pelo cors
+//     methods: ['GET', 'POST'], // Métodos aceitos pela url
+//   },
+// });
+//
+
+app.use(express.static(__dirname + '/public'));
+
+// require('./sockets/ping')(io);
+// ...
+Pronto, agora temos um código mais refatorado tanto no back-end como no front-end. Teste a aplicação para ver se tudo continua funcionando.
+Tudo certo? Vamos seguir com um novo exemplo do uso de sockets.
