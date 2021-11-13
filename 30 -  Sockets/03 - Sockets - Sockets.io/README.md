@@ -508,4 +508,4 @@ Faça um teste abrindo várias janelas do seu navegador lado a lado e testando o
 Desenvolvemos nosso primeiro chat. Na próxima seção vamos entender um pouco melhor como controlar eventos que são disparados automaticamente.
 © Trybe 2021
 ·
-Manual da Pessoa Estudante
+Manual da Pessoa Estudante do flavio
