@@ -579,3 +579,288 @@ socket.broadcast.emit : Enviar uma mensagem para todos os clientes exceto o clie
 socket.on('eventoCustomizado') : Escutar um evento qualquer.
 socket.on('disconnect') : Escutar o evento disparado quando um usuário se desconecta.
 socket.disconnect : Força o encerramento de uma conexão socket.
+
+### Salas
+O Socket.io tem um recurso que permite criar chats privados entre um conjunto especifico de clientes, para isso ele usa um recurso chamada de sala que pode ser exemplificado pela imagem abaixo.
+
+O conceito de um chat privado e que um cliente se conecta a uma sala especifica e a parti desse momento é possivel direncionar mensagens apenas para outris clientes que tambem estiverem conectados a essa mesma sala. Até o final dessa seção teremos duas telas, uma que permite o usuario colocar um nome de usuario e escolher uma sala
+A segunda tela que vai ser o chat para a sala escolhida.
+Vamos começar implementando a tela para entrar em uma sala.
+public/entrar.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/login.css">
+  <title>Chat por Tópicos</title>
+</head>
+<body>
+  <div class="login-page">
+    <div class="form">
+      <form class="login-form" action="room.html">
+        <input type="text" placeholder="username" name="username" />
+        <select name="room" id="room">
+          <option value="Cinema">Cinema</option>
+          <option value="Esporte">Esporte</option>
+          <option value="Tecnologia">Tecnologia</option>
+          <option value="Música">Música</option>
+          <option value="Memes">Memes</option>
+        </select>
+        <button>Entrar na sala</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
+
+A seguir está o código CSS utilizado nessa página.
+public/css/login.css
+
+/* Referência para este css: https://codepen.io/colorlib/pen/rxddKy*/
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
+.login-page {
+  width: 360px;
+  padding: 8% 0 0;
+  margin: auto;
+}
+.form {
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  max-width: 360px;
+  margin: 0 auto 100px;
+  padding: 45px;
+  text-align: center;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+.form input, select {
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  background: #f2f2f2;
+  width: 100%;
+  border: 0;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+.form button {
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background: #4CAF50;
+  width: 100%;
+  border: 0;
+  padding: 15px;
+  color: #FFFFFF;
+  font-size: 14px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+}
+.form button:hover,.form button:active,.form button:focus {
+  background: #43A047;
+}
+.form .message {
+  margin: 15px 0 0;
+  color: #b3b3b3;
+  font-size: 12px;
+}
+.form .message a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+.form .register-form {
+  display: none;
+}
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.container:before, .container:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.container .info {
+  margin: 50px auto;
+  text-align: center;
+}
+.container .info h1 {
+  margin: 0 0 15px;
+  padding: 0;
+  font-size: 36px;
+  font-weight: 515;
+  color: #1a1a1a;
+}
+.container .info span {
+  color: #4d4d4d;
+  font-size: 12px;
+}
+.container .info span a {
+  color: #000000;
+  text-decoration: none;
+}
+.container .info span .fa {
+  color: #EF3B3A;
+}
+body {
+  background: #76b852; /* fallback for old browsers */
+  background: -webkit-linear-gradient(right, #76b852, #8DC26F);
+  background: -moz-linear-gradient(right, #76b852, #8DC26F);
+  background: -o-linear-gradient(right, #76b852, #8DC26F);
+  background: linear-gradient(to left, #76b852, #8DC26F);
+  font-family: "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+Essa tela tem um form que faz uma requisição redirecionando para a página room.html enviando dois parâmetros, o username e room que vamos utilizar para poder abrir uma sala e identificar o usuário.
+public/room.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/chat.css">
+  <title>Chat</title>
+</head>
+<body>
+  <ul id="messages"></ul>
+  <form action="">
+    <input id="messageInput" autocomplete="off" /><button>Send</button>
+  </form>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.2/qs.min.js"
+    integrity="sha256-TDxXjkAUay70ae/QJBEpGKkpVslXaHHayklIVglFRT4=" crossorigin="anonymous"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- script que vai conter toda lógica de conexão com socket.io -->
+  <script src="./js/rooms.js"></script>
+</body>
+</html>
+
+Esta página segue a mesma base que nosso arquivo chat.html , mas estamos adicionando o uso da lib Qs que permite acessar parâmetros via query string do lado do front-end. É através dessa lib que vamos conseguir acessar os valores enviados pelo formulário da página entrar.html . Vamos implementar toda lógica desse chat no arquivo rooms que está sendo importado nessa página.
+public/js/rooms.js
+
+const socket = window.io();
+
+// A `lib` expõe a constante `Qs`, que utilizaremos dessa forma no nosso exemplo
+const { username, room } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true});
+
+console.log(username, room);
+
+Para conferir que os valores de username e room estão chegando corretamente, abra a URL http://localhost:3000/entrar.html , preencha os campos e aperte o botão. Confira se os valores foram exibidos no console do seu navegador.
+Ok, até o momento montamos esses dois arquivos, mas vamos começar a implementar de fato o nosso socket para criar uma sala de acordo com o tópico selecionado, para isso vamos fazer nosso cliente sinalizar para o servidor que quer entrar em uma sala específica.
+public/js/rooms.js
+
+const io = window.io();
+
+const { username, room } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true});
+
+socket.emit('joinRoom', { username, room });
+
+const createMessage = (message) => {
+  const messagesUl = document.querySelector('#messages');
+  const li = document.createElement('li');
+  li.innerText = message;
+  messagesUl.appendChild(li);
+}
+
+socket.on('serverMessage', (message) => createMessage(message));
+
+Agora vamos configurar nosso back-end para receber essa requisição, vamos criar um arquivo para lidar apenas com essa página específica.
+sockets/rooms.js
+
+module.exports = (io) => io.on('connection', (socket) => {
+  socket.on('joinRoom', ({ username, room }) => {
+    socket.join(room);
+
+    socket.emit('serverMessage', `Bem vindo ${username} a sala sobre ${room}`);
+
+    socket.broadcast.to(room).emit('serverMessage', `${username} acabou de entrar na sala`);
+  });
+});
+
+
+module.exports = (io) => io.on('connection', (socket) => {
+  socket.on('joinRoom', ({ username, room }) => {
+    socket.join(room);
+
+    socket.emit('serverMessage', `Bem vindo ${username} a sala sobre ${room}`);
+
+    socket.broadcast.to(room).emit('serverMessage', `${username} acabou de entrar na sala`);
+  });
+});
+
+index.js
+
+// const express = require('express');
+// const app = express();
+// const http = require('http').createServer(app);
+//
+// const io = require('socket.io')(http, {
+//   cors: {
+//     origin: 'http://localhost:3000', // url aceita pelo cors
+//     methods: ['GET', 'POST'], // Métodos aceitos pela url
+//   },
+// });
+//
+
+// require('./sockets/ping')(io);
+// require('./sockets/chat')(io);
+require('./sockets/rooms')(io);
+
+// ...
+
+Temos duas novidades, a primeira é o uso da função socket.join que sinaliza que um usuário se conectou a uma sala específica. A partir desse momento, esse usuário está apto a receber mensagens que forem enviadas para essa sala. A segunda é o socket.broadcast.to que envia um evento para uma sala específica. Dessa forma, garantimos que as mensagens enviadas nessa tela só chegarão para outros clientes que estiverem conectados na mesma sala.
+Agora faça um teste abra três navegadores e em dois deles entre com usuários no tópico Cinema e com o terceiro usuário entre no tópico Música . Dessa forma, quando o segundo usuário se conecta ele aparece para o primeiro usuário que está na mesma sala, mas o mesmo não acontece quando o terceiro usuário entra em uma sala diferente. Isso aconteceu graças ao recurso de salas do socket.io.
+Vamos agora fazer com que o envio de mensagens funcione para o chat privado. Vamos começar ajustando o cliente para emitir um evento quando apertar no botão de enviar.
+public/js/rooms.js
+
+// ...
+socket.emit('joinRoom', { username, room });
+
+const form = document.querySelector('form');
+const inputMessage = document.querySelector('#messageInput');
+
+form.addEventListener('submit', (e) =>{
+  e.preventDefault();
+  const message = inputMessage.value;
+  socket.emit('roomClientMessage', { room, message });
+  inputMessage.value = '';
+  return false;
+});
+
+Agora do lado do back-end vamos emitir a mensagem para todos os usuários conectados usando io.to.emit :
+sockets/rooms.js
+
+// module.exports = (io) => io.on('connection', (socket) => {
+//   socket.on('joinRoom', ({ username, room}) => {
+//     socket.join(room);
+//
+//     socket.emit('serverMessage', `Bem vindo ${username} a sala sobre ${room}`);
+//
+//     socket.broadcast.to(room).emit('serverMessage', `${username} acabou de entrar na sala`);
+//
+       socket.on('roomClientMessage', ({ message, room}) => {
+           io
+             .to(room)
+             .emit('serverMessage', `${username}: ${message}`)
+         });
+       });
+// });
+
+Pronto, agora nosso envio de mensagens já está funcionando para atender um chat privado. Do lado do cliente mandamos a sala como parâmetro e do lado do servidor usar a função io.to para enviar uma mensagem para todos os clientes conectados apenas a essa sala específica do tópico, isso garante que a mensagem só chegará nos outros clientes que estiverem no mesmo canal. Faça um teste entrando com dois usuários na sala Cinema e outros dois na sala Esportes e veja como a troca de mensagens está acontecendo.
+Resumindo, o que aprendemos:
+socket.join : Conecta um cliente a uma sala específica.
+socket.broacast.to(x).emit e io.to(x).emit : Funciona equivalente ao que já vimos anteriormente, porém enviando a mensagem apenas para os clientes que estiverem conectados a sala x .
