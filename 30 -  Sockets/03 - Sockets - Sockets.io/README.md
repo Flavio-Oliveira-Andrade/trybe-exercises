@@ -503,9 +503,79 @@ const createMessage = (message) => {
 };
 
 socket.on('serverMessage', (message) => createMessage(message));
+
 Agora, sim, quando o evento serverMessage é disparado pelo back-end, o mesmo é detectado pelo cliente através do sokect.on('serverMessage') que dispara uma callback com o parâmetro message e chama a função createMessage que adiciona um elemento li com o valor da variável message no elemento ul com o id messages .
 Faça um teste abrindo várias janelas do seu navegador lado a lado e testando o envio de mensagem. Para facilitar você pode usar um plugin do chrome chamado Tab Resize - split screen layouts , que possibilita abrir várias janelas do navegador em um formato de grid.
 Desenvolvemos nosso primeiro chat. Na próxima seção vamos entender um pouco melhor como controlar eventos que são disparados automaticamente.
 © Trybe 2021
 ·
 Manual da Pessoa Estudante
+
+## Aprofundando no uso de socket.io
+Além de enviar eventos usando `socket.emit e io.emit`, temos outras formas de usar o socket.io, mas primeiramente vamos entender a diferença entre estes dois métodos.
+
+### socket.emit:
+Quando executado do lado do fronte-end ele envia uma mensagem do front para o back, mas o que acontece se usarmos ele do lado do back-end. Para exprementar vamos adicionar a seguinte linha
+
+sockets/chat.js
+
+// module.exports = (io) => io.on('connection', (socket) => {
+    socket.emit('serverMessage', 'Olá, seja bem vindo ao nosso chat público! Use essa página para conversar a vontade.');
+//  socket.on('clientMessage', (message) => {
+//    console.log(`Mensagem ${message}`);
+//    io.emit('serverMessage', message);
+//  });
+// });
+
+Agora teste com duas abas abertas, depois que as páginas carregarem, recarregue novamente apenas uma das páginas. Você perceberá que a mensagem só chegou no navegador onde você recarregou a página. Isso acontece porque o socket.emit transmite uma mensagem apenas o cliente que disparou o evento connection . Essa é a principal diferença do socket.emit para o io.emit ; O primeiro envia apenas para o cliente que disparou o evento e o segundo transmite algo para todos os clientes que estão conectados ao socket.
+Podemos entender o uso do socket.emit veja a imagem abaixo.
+
+Mas e se for preciso enviar uma mensagem para todos os clientes, exceto o cliente atual, como seria possível fazer? Para isso vamos usar o socket.broadcast.emit !
+
+### socket.broacast.emit:
+
+Para enviar uma mensagem para todos os outros clientes, exceto para quem disparou um evento, vamos precisar recorrer ao broadcast do socket.io. Veremos o quão simples é fazer a implementação do envio de mensagem em massa, coisa bem diferente do que fizemos na aula anterior:
+sockets/chat.js
+
+// module.exports = (io) => io.on('connection', (socket) => {
+//  socket.emit('serverMessage', 'Olá, seja bem vindo ao nosso chat público! Use essa página para conversar a vontade.');
+    socket.broadcast.emit('serverMessage', `Iiiiiirraaaa! ${socket.id} acabou de se conectar :D`});
+// ...
+// });
+
+Agora, novamente com duas abas abertas, teste recarregar a página de um usuário e você perceberá que a mensagem para o outro cliente que não carregou a página recebeu a mensagem Iiiiiirraaaa! ... . Conseguimos fazer isso graças ao socket.broadcast.emit.
+Veja na imagem abaixo como o socket.broadcast.emit funciona.
+socket.broadcast.emit
+
+### socket.on('disconnect'):
+Sempre que um cliente fecha ou recarrega a página, a conexão socket é encerrada e o socket.io dispara automaticamente um evento disconnect . É possível criar um listener específico para detectar quando uma conexão é encerrada.
+sockets/chat.js
+
+// module.exports = (io) => io.on('connection', (socket) => {
+  // ...
+
+  socket.on('disconnect', () => {
+    socket.broadcast.emit('serverMessage', `Xiii! ${socket.id} acabou de se desconectar! :(`);
+  });
+});
+
+Novamente faça o teste com duas páginas abertas e feche a página de algum dos clientes. Os demais clientes que continuarem conectados ao socket vão receber a mensagem Xiii! ... . Note que usamos socket.broadcat.emit , poderíamos usar também io.emit , mas como o usuário está se desconectando faz sentido enviar apenas para os outros usuários através do envio em broadcast .
+Obs.: Nem sempre o navegador dispara o evento disconnect dependendo de como a página foi encerrada, para termos uma garantia que o socket vai realmente se desconectar, colo que o seguinte trecho de código no javascript do seu cliente.
+
+public/js/chat.js
+
+//...
+window.onbeforeunload = function(event) {
+  socket.disconnect();
+};
+
+Você pode usar a função socket.disconnect para fechar uma conexão socket e a partir desse momento essa página não vai conseguir nem emitir, nem escutar eventos.
+
+### O que aprendemos até aqui?
+Nosso leque de ferramentas com socket.io está aumentando. Até então vimos como usar as seguintes funções:
+socket.emit : Enviar uma mensagem apenas entre cliente <=> servidor que dispara um evento.
+io.emit : Enviar uma mensagem para todos os clientes com uma conexão socket aberta. (Só é possível usar do lado do servidor)
+socket.broadcast.emit : Enviar uma mensagem para todos os clientes exceto o cliente que disparou o evento. (Só é possível usar do lado do servidor)
+socket.on('eventoCustomizado') : Escutar um evento qualquer.
+socket.on('disconnect') : Escutar o evento disparado quando um usuário se desconecta.
+socket.disconnect : Força o encerramento de uma conexão socket.
