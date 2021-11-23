@@ -147,4 +147,4 @@ Salvar as informações dos arquivos em um banco de dados ou em um arquivo JSON.
 ·
 Manual da Pessoa Estudante
 Feito e constantemente atualizado pelo time Trybe com Elixir, Phoenix, React, Tailwind CSS e 💚
-estudo de socket io
+estudo de socket io io
