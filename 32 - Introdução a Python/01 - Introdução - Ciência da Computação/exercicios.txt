@@ -26,6 +26,7 @@ book_price = (1 - 0.4) * 24.20
 logistic = 3 + (books - 1) * 0.75
 cost = books * book_price + logistic
 cost
+
 Copie a lista abaixo para realizarmos os exercícios de fixação 5 e 6:
 Copiar
 trybe_course = ["Introdução", "Front-end", "Back-end"]
