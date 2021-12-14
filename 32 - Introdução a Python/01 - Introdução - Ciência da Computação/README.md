@@ -311,9 +311,121 @@ restaurants = [
 
 Quando um cliente pede a listagem de restaurante, ele pode escolher filtrar o resultado de acordo com a nota. Podemos fazer isto pecorrendo  alista de restaurante, criando um nova lista com somente aquele que atendem ao filtro.
 
+```
 filtered_restaurants = []
 min_rating = 3.0
 for restaurant in restaurants:
     if restaurant["nota"] > min_rating:
         filtered_restaurants.append(restaurant)
 print(filtered_restaurants)  # imprime a lista de restaurantes, sem o B e D
+```
+
+dando que a amaior parte do tempo estamos pecorrendo estruturas, os riadores da linguagem decidiram que `for each` seria o laço  de repetição princinpal na linguagem
+
+para cada repetição do nosso laço, um novo elemento de estrututa iteravel é atribuido a variavel de interação. No exemplo acima vemos que, a cada intereção , um novo restaurante é colocado na variavel de `restaurant`.
+
+💡 Em alguns casos, ainda podemos querer percorrer uma sequência numérica, e para isto iteramos sobre a estrutura de dados `range `.
+
+```
+for index in range(5):
+    print(index)
+```
+
+Além de listas, várias outras estruturas são iteráveis, como strings ( str ), tuplas ( tuple ), conjuntos ( set ), dicionários ( dict ) e até mesmo arquivos.
+
+### Comprensão de listas  " list ",
+
+existe uma maneira mais "pythonica" de ser fazer  isto! 🐍
+quando uma nova lista é criada como resultado de uma interação, podemos simplificar utilizando **compreensão de listas**.
+
+```
+min_rating = 3.0
+filtered_restaurants = [restaurant
+                         for restaurant in restaurants
+                         if restaurant["nota"] > min_rating]
+print(filtered_restaurants)  # imprime a lista de restaurantes, sem o B e D
+```
+Isto é equivalente às operações de map e filter em JavaScript.
+
+### while
+🔢 A Sequência de Fibonacci, muito presente em diversas formas na natureza, é uma sequencia numerica começando por 0 e 1 cada termo subsequente corresponde a soma dos dois anteriores.
+
+Podemos escrever esta sequencia da seguinte maneira:
+
+```
+n = 10
+last, next = 0, 1
+while last < n:
+    print(last)
+    last, next = next, last + next
+```
+O laço de repetição while , acontecerá enquanto a condição for satisfeita, e temos de ter o cuidado de manipular a variável presente na condicional ou entraremos em uma repetição infinita.
+No exemplo, estamos imprimindo os elementos da sequência até que atinja o valor 10.
+💡 Foi utilizado um truque neste exemplo que se chama atribuição múltipla. Isto é atribuição de vários valores a múltiplas variáveis ao mesmo tempo. Este truque pode ser utilizado também para fazer a troca de valores entre variáveis: a, b = b, a .
+
+# Funções Python
+
+```
+def imc (peso, altura ):
+    result = peso/(altura /100)**2
+    print(f"seu imc e {result}")
+
+imc(100, 187)
+imc(peso=90, altura=187)
+```
+Notamos que funções são definidas atraves da palavra `def = define`, seguida de um nome e os parametros entre parentes. como todo bloco de codigo em Python o caractere: define o inicio do bloco e a identação seu fim.
+
+os paramentros podem ser passados de forma posicional ou nomeada. os posicionais são aqueles definidos atraveś da posição ao qual é chamado e os nomeados são definidos atraves do nome.
+
+```
+def soma(x, y):
+    return x + y
+
+soma(2, 2)  # os parâmetros aqui são posicionais
+
+soma(x=2, y=2)  # aqui estamos nomeando os parâmetros
+```
+Os paramentros tambem podem ser variadicos. ou seja . podem variar em sua quantidade. Parâmetros posicionais variadicos são acessados como tuplas no interios de uma função e parametros nomeados variadicos como dicionário
+
+```
+def concat(*strings):
+    # Equivalente a um ", ".join(strings), que concatena os elementos de um iterável em uma string utilizando um separador
+    # Nesse caso a string resultante estaria separada por vírgula
+    final_string = ""
+    for string in strings:
+        final_string += string
+        if not string == strings[-1]:
+            final_string += ', '
+    return final_string
+
+# pode ser chamado com 2 parâmetros
+concat("Carlos", "João")  # saída: "Carlos, João"
+
+# pode ser chamado com um número n de parâmetros
+concat("Carlos", "João", "Maria")  # saída: "Carlos, João, Maria"
+
+# dict é uma função que já vem embutida no python
+dict(nome="Felipe", sobrenome="Silva", idade=25)  # cria um dicionário utilizando as chaves passadas
+
+dict(nome="Ana", sobrenome="Souza", idade=21, turma=1)  # o número de parâmetros passados para a função pode variar
+```
+Variaves definidas  dentro das funções  tem escopo local, porém uma função quando não encontra um nome no escopo local irá procurar no espaço de nome global.
+
+Em alguns casos, podemos querer  limitar um parâmetro em  nomeado ou posicional para evitar ambiguidades e/ou aumentar legibilidade.
+
+```
+len([1, 2, 3, 4])  # função len não aceita argumentos nomeados
+
+len(obj=[1, 2, 3, 4])  # este código irá falhar
+
+print("Botaro", "Cássio", ", ")  # imprime Botaro Cássio ,
+
+print("Botaro", "Cássio", sep=", ")  # nomeando o terceiro parâmetro, agora temos a saída: Botaro, Cássio
+```
+
+
+
+
+
+
+
