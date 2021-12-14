@@ -497,6 +497,31 @@ Ao executarmos novamente nosso script , agora tudo está ok! 🎉
 
 Execução só exibe o resultado correto.
 
+# outra dica
+
+você deve esta pensando agora "Socorro! Acho que não vou me lembrar tudo o que eu vi, posso acabar me confundindo com outras linguagens:
+
+Então vou te dar um conselho! Sempre que estiver programando e sugir alguma duvida, abra o terminal interativo e verifique o que esta fazendo. Ele pode ser seu aliado, e pode inclusive te dar ajuda quando necessario.
+
+Temos um  comando que se chama `help`, e ele pode ser utilizado ate mesmo em  clausulas `if ou for `, desde que colocados entre aspas.
+
+```
+help("if")
+```
+A tecla `q` deve ser apertada para sair da ajudar
+
+Experimente tambem para funções como `àbs ou len ` que são padrões da linguagem. E para a função `sin` que esta presente no modulo `math` embutido.
+
+```
+import math
+
+help(abs)
+
+help(len)
+
+help(math.sin)
+```
+
 
 
 
