@@ -16,7 +16,8 @@ meu_dict = {123: "um dois tres", "chave": "valor"}
 print(meu_dict[123])
 print(meu_dict["chave"])
 
-
+for index in range(5):
+    print(f"index {index + 1}")
 
 # contador = 10
 # while catador > 0:

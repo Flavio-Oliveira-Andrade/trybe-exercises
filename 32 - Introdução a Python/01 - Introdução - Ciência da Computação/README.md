@@ -257,3 +257,63 @@ list(range(10, 0, -1))  # saída: [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 Além dos tipos básicos, temos outros como datas, tuplas nomeadas, arrays, enumerações e outros, mas estes tem de ser importados de seus respectivos módulos.
 Exercício 11: Após uma consulta do banco de dados, temos linhas que contém nome, sobrenome e idade como: "Thiago", "Nobre", 29 . Que estrutura vista anteriormente seria recomendada dado que após esta consulta somente exibimos estes valores.
 Exercício 12: Realizar a contagem de quantas vezes cada elemento aparece em uma sequência é uma técnica muito útil na solução de alguns problemas. Qual é a estrutura mais recomendada para o armazenamento desta contagem?
+
+## Estruturas condicionais
+
+🎲 Em uma análise de dados sobre pessoas desenvolvedoras, temos uma base de dados que contém o salário de várias pessoas, porém não temos informação da senioridade das mesmas. Para fazer um agrupamento por senioridade precisamos criar uma nova coluna que será baseada no salário.
+Caso o salário seja menor que "R$2.000,00", a pessoa será considerada como estagiária, para salários entre R$2.000,00 e R$5.800,00 júnior, entre R$5.800,00 e R$7.500,00 pleno, entre R$7.500,00 e R$10.500,00 será sênior e qualquer valor acima disto consideraremos líder.
+
+position = ""
+if salary <= 2000:
+    position = "estagiário"
+elif 2000 < salary <= 5800:
+    position = "júnior"
+elif 5800 < salary <= 7500:
+    position = "pleno"
+elif 7500 < salary <= 10500:
+    position = "senior"
+else:
+    position = "líder"
+
+
+🎨 A indentação do código deve ser feita com 4 espaços em vez de tabs.
+
+Não está faltando coisa aí não?! 😂
+Note que if e elif são seguidos de uma expressão que se avaliada como verdadeira, o trecho de código será executado. Um outro detalhe é a ausência de chaves para definir o bloco. Utilizamos o caractere : para indicar abertura de um bloco e somente indentação para indicar o término.
+O bloco else será executado se nenhuma das condições anteriores for satisfeita.
+Agora que escrevemos mais linhas, notamos também a ausência do caractere ; . Pois bem, a filosofia da linguagem nos diz: "Legibilidade conta...", então não precisamos mais dele.
+Agora com a senioridade em mãos, podemos criar uma nova coluna em nossa base dados com essa informação e realizar o agrupamento por cargo, desenhando lindos gráficos. 📊
+Posso modificar para uma estrutura switch ?
+A estrutura condicional if e seu aninhamento com elif e else é tão simples e legível que não precisamos da estrutura switch .
+"Simples é melhor do que complexo" - Zen do python
+Em alguns casos, que não prejudiquem a legibilidade, podemos criar estruturas de mapeamento ( dicts ) para simplificar o aninhamento de condicionais.
+
+
+key = "id"
+from_to = {
+    "id": "identifier",
+    "mail": "email",
+    "lastName": "last_name",
+}
+from_to[key]
+
+## Estrutura de repetição
+
+for
+🥗 Pense em uma sistema que faça a listagem de um restaurantes. estes restaurante possuem nota aproveitamente da avaliação
+
+restaurants = [
+    {"name": "Restaurante A", "nota": 4.5},
+    {"name": "Restaurante B", "nota": 3.0},
+    {"name": "Restaurante C", "nota": 4.2},
+    {"name": "Restaurante D", "nota": 2.3},
+]
+
+Quando um cliente pede a listagem de restaurante, ele pode escolher filtrar o resultado de acordo com a nota. Podemos fazer isto pecorrendo  alista de restaurante, criando um nova lista com somente aquele que atendem ao filtro.
+
+filtered_restaurants = []
+min_rating = 3.0
+for restaurant in restaurants:
+    if restaurant["nota"] > min_rating:
+        filtered_restaurants.append(restaurant)
+print(filtered_restaurants)  # imprime a lista de restaurantes, sem o B e D
