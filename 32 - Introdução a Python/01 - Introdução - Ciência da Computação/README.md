@@ -422,6 +422,82 @@ print("Botaro", "Cássio", ", ")  # imprime Botaro Cássio ,
 
 print("Botaro", "Cássio", sep=", ")  # nomeando o terceiro parâmetro, agora temos a saída: Botaro, Cássio
 ```
+### Escrevendo os primeiros arquivos:
+
+Esta divertido no terminal interativo e ter uma resposta logo em seguida, mas se eu fechar o terminal irei peder tudo que eu fiz até agora e programas do dia  a dia não  são assim
+
+Vamos então escrever nossos primeiros arquivos de código? Mas antes de seguirmos, que tal darmos uma olhadinha no Guia de configuração de ambiente Python ?
+Antes de escrever nosso primeiro arquivo, precisamos saber que todo arquivo com extensão .py é considerado um módulo. Módulos são declarados utilizando snake case , ou seja, com nomes minúsculos e quando possuírem mais de uma palavra, devem ser separadas por underscore ( _ ).
+Vamos agora criar o arquivo area.py , vamos declarar funções que calculam a área de algumas figuras geométricas.
+area.py
+
+Copiar
+PI = 3.14  # PI é uma "constante" em nosso módulo
+
+
+def square(side):
+    '''Calculate area of square.'''
+    return side * side
+
+
+def rectangle(length, width):
+    '''Calculate area of rectangle.'''
+    return length * width
+
+
+def circle(radius):
+    '''Calculate area of circle.'''
+    return PI * radius * radius
+Esse código segue algumas boas práticas para legibilidade, por exemplo, entre cada função temos um espaço de 2 linhas. As funções são declaradas com nomes em letras minúsculas e a constante PI é definida em letras maiúsculas.
+Constante?!?! 🤔
+Existe uma convenção de declarar valores considerados constantes com letras maiúsculas, e o respeito por outros programadores de não alterarem aquele valor.
+Abra um terminal e para executar o módulo em python, escreva python3 area.py . Se não houve nenhum erro de digitação, nada deve ter acontecido. Neste módulo só temos definições das funções e valores, mas não estamos executando nenhuma delas. Isto é o que chamamos de execução do módulo como script .
+
+Nosso primeiro módulo e sua execução.
+Vamos testá-lo! No fim do arquivo vamos adicionar algumas linhas para imprimir a área de algumas figuras geométricas.
+Copiar
+print("Área do quadrado:", square(10))
+print("Área do retângulo:", rectangle(2, 2))
+print("Área do círculo:", circle(3))
+Agora quando executamos o arquivo area.py , estes valores de teste são exibidos.
+
+Nosso módulo quando executado exibe alguns valores de teste.
+Vamos então utilizar o nosso módulo de calcular área de figuras planas. Vamos escrever um novo arquivo com nome people.py e ele será um script para calcular pessoas que estão presentes em um show, dado a área do mesmo.
+Este script será escrito da seguinte maneira:
+people.py
+Copiar
+import area
+
+
+PEOPLE_AT_CONCERT_PER_SQUARE_METER = 2  # numero de pessoas por metro quadrado em média
+FIELD_LENGTH = 240  # em metros
+FIELD_WIDTH = 45  # em metros
+PEOPLE_AT_CONCERT = area.rectangle(FIELD_LENGTH, FIELD_WIDTH) // PEOPLE_AT_CONCERT_PER_SQUARE_METER
+
+
+print("Estão presentes no show aproximadamente", PEOPLE_AT_CONCERT, "pessoas")
+O import é utilizado para termos todas as funções do módulo disponíveis em outro arquivo. Uma outra maneira de utilizarmos o import é utilizando from area import rectangle , porém, tome cuidado com conflitos de nomes caso utilize a segunda maneira.
+Ao executa-lo com o comando python3 people.py vemos que a saída não saiu bem como esperávamos.
+
+Execução exibe os testes feitos no módulo de área.
+Nossa! Os nossos valores de teste estão sendo exibidos quando importamos o módulo. 😨 Mas não queremos isto!
+Para corrigir, podemos acrescentar uma condicional ao módulo para somente exibir esses valores de teste quando o módulo for executado como script .
+A variável __name__ é utilizada pelo interpretador Python para identificar o arquivo que esta sendo executado e seu valor será "__main__" quando invocamos um módulo como script .
+area.py
+Copiar
+# ...
+
+
+if __name__ == "__main__":
+    print("Área do quadrado:", square(10))
+    print("Área do retângulo:", rectangle(2, 2))
+    print("Área do círculo:", circle(3))
+
+Ao executarmos novamente nosso script , agora tudo está ok! 🎉
+
+Execução só exibe o resultado correto.
+
+
 
 
 
