@@ -1,0 +1,17 @@
+**/.DS_Store
+**/.vscode
+node_modules/
+
+
+no json do jest configure
+para que o jest a cada mudança nos arqquivo de test
+-- verbose , com esta implementação ele fala nome do teste
+a qual esta testando,
+
+"test": "jest --watchall --verbose"
+
+www.scalidraw mapa de trabalho
+
+mock = imitção da função real
+o que é o
+spy = vai espiar dentro da aplicação verdadeira

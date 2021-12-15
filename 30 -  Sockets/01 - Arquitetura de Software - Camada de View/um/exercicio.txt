@@ -1,0 +1,259 @@
+No index.js , registramos uma nova rota para a página de detalhes. Em authorController , adicionamos uma função controller para responder a requisições para essa rota. Ela funciona de forma muito semelhante a listAuthors . A diferença é que ela extrai o parâmetro id da URL e o usa para consultar o model pelo escritor requisitado. Caso o model não encontre um escritor, setamos o código de status para 404 (Not Found) e renderizamos uma view específica para esse caso. Caso um escritor seja encontrado, a view de detalhes ( show.ejs ) é renderizada.
+Agora crie as novas views show.ejs e 404.ejs :
+views/authors/show.ejs
+Copiar
+<!doctype html>
+<html>
+  <head>
+    <title>MVC com Express</title>
+  </head>
+  <body>
+    <div>
+      <p>Nome: <%= author.name %></p>
+    </div>
+    <a href="/authors">Voltar para página inicial</a>
+  </body>
+</html>
+views/404.ejs
+Copiar
+<!doctype html>
+<html>
+  <head>
+    <title>MVC com Express</title>
+  </head>
+  <body>
+    <h1>Página não encontrada!</h1>
+  </body>
+</html>
+E, na view index.ejs , adicionamos um link para cada escritor que levará para sua respectiva página de detalhes:
+views/authors/index.ejs
+Copiar
+<!-- <!doctype html>
+<html>
+  <head>
+    <title>MVC - Exemplo</title>
+  </head>
+  <body>
+    <ul>
+      <% authors.forEach((author) => { %>
+        <li><%= author.name %></li> -->
+        <a href=<%= `/authors/${author.id}` %>>Ver detalhes</a>
+      <!-- <% }) %>
+    </ul>
+  </body>
+</html> -->
+Nos códigos acima você viu que também é possível adicionar um determinado conteúdo e/ou atributo a uma tag HTML com o EJS, para isso é necessário você colocar o código que você deseja entre , dessa forma uma está falando que determinado atributo e/ou conteúdo é igual ao retorno do que código entre as tags .
+Reinicie o servidor e recarregue a página. Cada escritor agora possui um link junto a seu nome. Ao clicar nesse link, você é levado para a página de detalhes. Se mudarmos a URL colocando um id que não existe, é exibida a mensagem "Página não encontrada!".
+Criando um novo escritor
+Agora vamos incrementar nossa aplicação para permitir a criação de novos escritores.
+Primeiro, vamos adicionar dois métodos no nosso model.
+models/Author.js
+Copiar
+// const connection = require('./connection');
+
+// Cria uma string com o nome completo do autor
+
+// const getNewAuthor = (authorData) => {
+// const { id, firstName, middleName, lastName } = authorData;
+
+// const fullName = [firstName, middleName, lastName]
+//  .filter((name) => name)
+//  .join(' ');
+
+// return {
+//  id,
+//  firstName,
+//  middleName,
+//  lastName,
+//  name: fullName,
+//  };
+// };
+
+// Serializa o nome dos campos de snake_case para camelCase
+
+// const serialize = (authorData) => ({
+//   id: authorData.id,
+//   firstName: authorData.first_name,
+//   middleName: authorData.middle_name,
+//   lastName: authorData.last_name,
+// });
+
+// Busca todos os autores do banco.
+
+// const getAll = async () => {
+//   const [authors] = await connection.execute(
+//     'SELECT id, first_name, middle_name, last_name FROM authors;',
+//   );
+//   return authors.map(serialize).map(getNewAuthor);
+// };
+
+//
+// Busca um autor específico, a partir do seu ID
+// @param {String} id ID do autor a ser recuperado
+//
+// const findById = async (id) => {
+//   const [
+//     authorData,
+//   ] = await connection.execute(
+//     'SELECT  first_name, middle_name, last_name FROM authors WHERE id = ?',
+//     [id],
+//   );
+
+// if (!authorData) return null;
+
+// const { firstName, middleName, lastName } = authorData.map(serialize)[0];
+
+// return getNewAuthor({ id, firstName, middleName, lastName });
+// };
+
+const isValid = (firstName, middleName, lastName) => {
+  if (!firstName || typeof firstName !== 'string') return false;
+  if (!lastName || typeof lastName !== 'string') return false;
+  if (middleName && typeof middleName !== 'string') return false;
+
+  return true;
+};
+
+const create = async (firstName, middleName, lastName) => connection.execute(
+  'INSERT INTO mvc_example.authors (first_name, middle_name, last_name) VALUES (?,?,?)',
+  [firstName, middleName, lastName],
+);
+
+// module.exports = {
+// getAll,
+// findById,
+   isValid,
+   create,
+// };
+A função create funciona exatamente igual a que viemos no conteúdo de MSC, assim como a função isValid que retorna um boolean indicando se os dados são válidos, checando se firstName e lastName são strings não vazias, e se middleName , caso seja informado, é uma string.
+Agora, precisamos criar o formulário que permitirá criar novos escritores. O formulário será renderizado na rota /authors/new e, ao ser submetido, fará uma requisição POST para /authors .
+Como agora teremos requisições POST, precisaremos fazer o parsing do corpo da requisição. O middleware body-parser é capaz de fazer isso automaticamente para nós.
+Copiar
+$ npm install body-parser
+index.js
+Copiar
+// const express = require('express');
+const bodyParser = require('body-parser');
+
+// const authorController = require('./controllers/authorController');
+
+// const app = express();
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// app.set('view engine', 'ejs');
+
+// app.set('views', './views');
+
+// app.get('/authors', authorController.listAuthors);
+
+app.get('/authors/new', authorController.newAuthor);
+
+// app.get('/authors/:id', authorController.showAuthor);
+
+app.post('/authors', authorController.createAuthor);
+
+// const PORT = process.env.PORT || 3000;
+
+// app.listen(PORT, () => {
+//   console.log(`Ouvinndo a porta ${PORT}`);
+// });
+Note que a rota /authors/new deve ficar antes de /authors/:id . Como você já sabe, ao receber uma requisição, o express compara o caminho da URL com as rotas existentes, na ordem em que foram definidas. Se você inverter a ordem das rotas, ao entrar em localhost:3000/authors/new , a rota /authors/:id será a primeira a dar match , como se você estivesse procurando um escritor com o id new , e receberá como resposta a página 404 . Experimente!
+Um outra coisa que você deve ter notado é que existem duas rotas para /authors/new , sendo uma GET e outra POST , isso precisa ser feito, pois através da rota GET se irá obter o formulário, para que assim sejá possivel cadastrar o novo autor, enquanto na rota POST é para onde os dados do autor a ser criado são enviados e então cadastrados no banco. E é por isso que teremos dois controllers diferentes, você entenderá mais sobre eles logo mais.
+Em authorController.js , adicionamos as funções controller que responderão a essas rotas.
+controllers/authorController.js
+Copiar
+// const Author = require('../models/Author');
+
+// exports.listAuthors = async (req, res) => {
+//   const authors = await Author.getAll();
+
+//   res.render('authors/index', { authors });
+// };
+
+// exports.showAuthor = async (req, res) => {
+//   const { id } = req.params;
+//   const author = await Author.findById(id);
+
+//   if (author) {
+//     res.status(200).render('authors/show', { author });
+//   } else {
+//     res.status(404).render('404');
+//   }
+// };
+
+const newAuthor = (req, res) => {
+  res.render('authors/new', { message: null });
+};
+
+const createAuthor = async (req, res) => {
+  const { first_name, middle_name, last_name } = req.body;
+
+  if (!Author.isValid(first_name, middle_name, last_name)) {
+    return res.render('authors/new', { message: 'Dados inválidos' });
+  }
+
+  await Author.create(first_name, middle_name, last_name);
+  res.redirect('authors');
+};
+
+//module.exports = {
+//  listAuthors,
+//  showAuthor,
+    newAuthor,
+    createAuthor,
+// }
+newAuthor simplesmente renderiza o formulário. Explicaremos o porquê do segundo parâmetro { message: null } em um instante.
+createAuthor extrai os parâmetros do formulário que chegam em req.body , verifica se os dados enviados são válidos. Caso não sejam, o formulário é renderizado novamente, passando uma mensagem indicando que os dados fornecidos são inválidos. Caso os dados sejam válidos, pede ao modelo para criar um novo escritor e redireciona a pessoa para a lista completa em /authors .
+Agora criamos o formulário:
+views/authors/new.ejs
+Copiar
+<!doctype html>
+<html>
+  <head>
+    <title>MVC com Express</title>
+  </head>
+  <body>
+    <% if (message) { %>
+      <div><%= message %></div>
+    <% } %>
+    <form action="/authors" method="POST">
+      <label for="first_name">Nome:</label>
+      <input id="first_name" name="first_name" type="text" />
+      <label for="middle_name">Nome do meio:</label>
+      <input id="middle_name" name="middle_name" type="text" />
+      <label for="last_name">Sobrenome:</label>
+      <input id="last_name" name="last_name" type="text" />
+      <button type="submit">Criar novo autor!</button>
+    </form>
+    <a href="/authors">Voltar para página inicial</a>
+  </body>
+</html>
+E adicionamos um link na página inicial:
+views/authors/index.ejs
+Copiar
+<!-- <!doctype html>
+<html>
+  <head>
+    <title>MVC - Exemplo</title>
+  </head>
+  <body>
+    <ul>
+      <% authors.forEach((author) => { %>
+        <li><%= author.name %></li>
+        <a href=<%= `/authors/${author.id}` %>>Ver detalhes</a>
+      <% }) %>
+    </ul> -->
+    <a href="/authors/new">Criar novo autor</a>
+  <!-- </body>
+</html> -->
+Na view new.ejs , verificamos se a variável message contém um valor não nulo e, caso tenha, renderizamos uma div com a mensagem recebida. É por isso que no controller newAuthor precisamos passar { message: null } como segundo parâmetro. Se não fizéssemos isso, ocorreria um erro ao tentar renderizar a view, pois a variável message não estaria definida.
+Recarregue o servidor e insira alguns novos escritores. Tente inserir algum escritor com dados inválidos.
+
+Finalizando
+O objetivo desse exemplo foi mostrar como se constrói uma aplicação web MVC "na mão", de forma que você possa ver na prática a aplicação dos conceitos do MVC. Embora funcional, essa aplicação pode ter vários problemas: bugs, falhas de segurança, duplicidade de código HTML etc.
+Em aplicações de mercado, no entanto, é possível utilizar um framework MVC. Esses frameworks automatizam e facilitam várias tarefas que você realizará no dia a dia, como autenticação e autorização de usuário, geração de APIs HTTP e consultas ao banco de dados, por exemplo.
+Contudo, quando você for utilizar um desses frameworks, entenderá melhor como suas camadas se comunicam e quais as motivações por trás das decisões arquiteturais tomadas, em vez de simplesmente aceitar que as coisas "são do jeito que são".
+© Trybe 2021
+·
+Manual da Pessoa Estudante

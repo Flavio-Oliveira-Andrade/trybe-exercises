@@ -1,0 +1,264 @@
+Agora é sua vez!
+Para os próximos exercícios use a seguinte página HTML como base para fazer o que é pedido.
+Copiar
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.6/css/all.css">
+  <link rel="stylesheet" href="./css/feed.css">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app" class="columns">
+    <div class="column">
+      <div class="tweet">
+        <div class="box">
+          <article class="media">
+            <div class="media-left">
+              <figure class="image is-64x64">
+                <img src="https://semantic-ui.com/images/avatar2/large/matthew.png" alt="Image">
+              </figure>
+            </div>
+            <div class="media-content">
+              <div class="content">
+                <p>
+                  <strong>James</strong><small>@jokerjames</small>
+                  <br>
+                  If you don't succeed, dust yourself off and try again.
+                </p>
+              </div>
+              <div class="level-left">
+                <a class="level-item">
+                  <span class="icon is-small" id='likeIcon'><i class="fas fa-heart"></i></span>
+                  <span class="likes" id='currentLikes'>0</span>
+                  <span class="icon is-small" id='starIcon'><i class="fas fa-star"></i></span>
+                  <span class="likes" id='currentStars'>0</span>
+                </a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+Copiar
+/* Link de referência: https://codepen.io/itslit/pen/xWjZKy */
+html, body {
+  height: 100%;
+  padding-top: 10px;
+  background: #e6ecf1;
+}
+
+#app {
+  height: 100%;
+  padding-top: 0px;
+  text-align: center;
+}
+
+#app .button {
+  margin-bottom: 20px;
+}
+
+#app .tweet {
+  max-width: 500px;
+  margin: 0 auto;
+  padding-bottom: 15px;
+}
+
+#app .box {
+  margin-bottom: 0;
+  border-radius: 0;
+}
+
+#app .content small {
+  color: #00d1b2;
+}
+
+#app img {
+  border-radius: 30px;
+}
+
+#app .level-item {
+  padding-left: 10px;
+  color: #00d1b2;
+}
+
+#app input:focus {
+  border-color: #00d1b2;
+}
+
+#app .likes {
+  padding: 0 7.5px;
+}
+
+#app input {
+  font-weight: bold;
+}
+
+#app .tweets-move {
+  transition: transform 1s;
+}
+Antes de começar faça o setup básico para sua aplicação ter a comunicação do socket preparada do lado do cliente e do lado do servidor.
+Faça com que quando o cliente clicar no elemento com o id likeIcon , seja emitido um evento likePost para o servidor.
+Do lado do servidor faça um listener para capturar o evento likePost que vai incrementar a quantidade atual de likes do post.
+Emita um evento updateLikes apenas para o cliente que enviou o like enviando a quantidade atual de likes.
+Modifique o código feito no exercício anterior para com que o evento updateLikes seja enviado para todos os clientes conectados.
+Faça com que o ícone com id starIcon emita um evento starPost e atualize a quantidade diretamente pelo front-end.
+No servidor implemente um listener para o evento starPost e emita um evento updateStars com a quantidade para todos os clientes exceto o cliente que enviou o evento.
+Implemente um listener para o evento updateStars para atualizar a quantidade atual de estrelas.
+
+Bônus
+Reestruture a aplicação para usar a arquitetura MVC e refatore toda a parte do socket para permitir que seja possível fazer like especificamente em cada tweet sem afetar a quantidade dos demais.
+
+
+
+
+Desenvolvimento Back-end
+Bloco 30 - Sockets
+30.3 Gabarito - Sockets - Socket.io
+Gabarito dos exercícios
+A seguir temos uma possível solução para os exercícios:
+Antes de resolver os exercícios faça a configuração do socket.io do lado do servidor e do lado do cliente.
+public/js/index.js
+Copiar
+const express = require('express');
+const app = express();
+const http = require('http').createServer(app);
+
+const io = require('socket.io')(http, {
+  cors: {
+    origin: 'http://localhost:3000', // url aceita pelo cors
+    methods: ['GET', 'POST'], // Métodos aceitos pela url
+  }
+});
+
+app.use(express.static(__dirname + '/public'));
+
+require('./sockets/feed')(io);
+
+http.listen(3000, () => {
+  console.log('Servidor ouvindo na porta 3000');
+});
+Adicione as duas linhas abaixo no final do body do html.
+Copiar
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/feed.js"></script>
+Exercício 1
+Faça com que quando o cliente clicar no elemento com o id likeIcon , seja emitido um evento likePost para o servidor.
+public/js/feed.js
+Copiar
+const socket = window.io();
+
+document.querySelector('#likeIcon').addEventListener('click', () => {
+  socket.emit('likePost');
+});
+Exercício 2
+Do lado do servidor faça um listener para capturar o evento likePost que vai incrementar a quantidade atual de likes do post.
+sockets/feed.js
+Copiar
+module.exports = (io) => io.on('connection', (socket) => {
+  let currentLikes = 0;
+
+  socket.on('like', () => {
+    currentLikes += 1;
+  })
+});
+Exercício 3
+Emita um evento updateLikes apenas para o cliente que enviou o like enviando a quantidade atual de likes.
+sockets/feed.js
+Copiar
+module.exports = (io) => io.on('connection', (socket) => {
+  let currentLikes = 0;
+
+  socket.on('like', () => {
+    currentLikes += 1;
+
+    socket.emit('updateLikes', currentLikes);
+  })
+});
+Exercício 4
+Modifique o código feito no exercício anterior para com que o evento updateLikes seja enviado para todos os clientes conectados.
+sockets/feed.js
+Copiar
+module.exports = (io) => io.on('connection', (socket) => {
+  let currentLikes = 0;
+
+  socket.on('like', () => {
+    currentLikes += 1;
+
+    io.emit('updateLikes', currentLikes);
+  })
+});
+Exercício 5
+Faça com que o ícone com id starIcon emita um evento starPost e atualize a quantidade diretamente pelo front-end para o cliente atual.
+Copiar
+// const socket = window.io();
+//
+// document.querySelector('#likeIcon').addEventListener('click', () => {
+//   socket.emit('likePost');
+// });
+//
+// socket.on('updateLikes', (countLikes) => {
+//   document.querySelector('#currentLikes').innerHTML = countLikes;
+// });
+
+document.querySelector('#starIcon').addEventListener('click', () => {
+  const currentStarsElement = document.querySelector('#currentStars');
+  let currentStars = parseInt(currentStarsElement.innerHTML);
+
+  currentStarsElement.innerHTML = currentStars + 1;
+
+  socket.emit('starPost');
+});
+Exercício 6
+No servidor implemente um listener para o evento starPost e emita um evento updateStars com a quantidade para todos os clientes exceto o cliente que enviou o evento.
+Copiar
+module.exports = (io) => io.on('connection', (socket) => {
+  let currentLikes = 0;
+  let currentStars = 0;
+
+  socket.on('likePost', () => {
+    currentLikes += 1;
+
+    socket.emit('updateLikes', currentLikes);
+  })
+
+  socket.on('starPost', () => {
+    currentStars += 1;
+
+    socket.broadcast.emit('updateStars', currentStars);
+  })
+});
+Exercício 7
+Implemente um listener para o evento updateStars para atualizar a quantidade atual de estrelas.
+Copiar
+// const socket = window.io();
+//
+// document.querySelector('#likeIcon').addEventListener('click', () => {
+//   socket.emit('likePost');
+// });
+//
+// socket.on('updateLikes', (countLikes) => {
+//   document.querySelector('#currentLikes').innerHTML = countLikes;
+// });
+//
+// document.querySelector('#starIcon').addEventListener('click', () => {
+//   const currentStarsElement = document.querySelector('#currentStars');
+//   let currentStars = parseInt(currentStarsElement.innerHTML);
+//
+//   currentStarsElement.innerHTML = currentStars + 1;
+//
+//   socket.emit('starPost');
+// });
+
+socket.on('updateStars', (countStars) => {
+  document.querySelector('#currentStars').innerHTML = countStars;
+});

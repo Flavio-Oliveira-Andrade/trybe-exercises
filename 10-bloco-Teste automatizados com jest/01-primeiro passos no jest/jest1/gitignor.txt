@@ -1,0 +1,56 @@
+comamdos para iniciar o jest e o gitignore
+
+// .gitignore
+**/.DS_Store
+**/.vscode
+node_modules/
+
+modulo de teste do Node.JS
+assert
+
+começando um projeto
+
+1 vamos verificar o versao do
+npm  = npm -v
+
+2 vamos fazer um atualização se precisar
+sudo apt update
+
+3 caso precise vamos estalar npm
+sudo apt install npm
+
+4 npm init -y
+Wrote to /home/cleyton/Documents/meuApp/package.json:
+obs: para que esse comando funcione precisa passar pacth // abra o terminal direto
+da pasta e chame o comando , assim ele nao falha .
+
+{
+  "name": "meuApp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
+
+b. Este comando acabou de criar o arquivo package.json
+. Agora você precisa editar este arquivo, substituindo
+"test": "echo \"Error: no test specified\" && exit 1"
+por "test": "jest" , da seguinte forma:
+
+Explicando o que é o package.json
+é onde listamos todas as nossas depedencias que o codigo usa
+
+modulo de teste Frameworks
+// Jest
+
+vamos agora estalar o jest
+dentro da pasta que voce acabou de criar , vamos executar os seguintes comandos
+
+1 - npm install --save-dev jest
+
+

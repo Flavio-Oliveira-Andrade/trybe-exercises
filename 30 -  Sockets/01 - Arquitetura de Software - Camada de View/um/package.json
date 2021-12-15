@@ -1,0 +1,18 @@
+{
+  "name": "01---arquitetura-de-software---camada-de-view",
+  "version": "1.0.0",
+  "description": "Hoje, Você  vai aprender um outra forma de organização e divisão de responsabilidades nas suas aplicações Node.Js e Express, utilizando um dos padrões arquitetura mais fomoso do mercado MVC Model View Controller",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "mysql2": "^2.3.2"
+  }
+}

@@ -1,0 +1,13 @@
+select * from actor where first_name  = 'Johnny' or last_name = "CAGE";
+select title, rental_duration from film where rental_duration != 6 And rating = 'R';
+select title, rental_duration, rating from film where rental_duration = 6 and (rating = 'R' or rating = 'PG-13');
+select * from film where length between 50 and 70 order by length desc;
+select * from actor where first_name between 'b' and 'dz' order by first_name;
+select now()as 'data atual';
+select curdate();
+select curtime();
+select * from rental where date(rental_date) = '2005-05-26';
+select * from rental where  rental_date between '2005-05-26 00:00:00' and '2005-05-26 12:00:00';
+select * from customer where first_name like 'fer%';
+select * from customer where first_name like '__ME%';
+select * from customer where first_name like '___';
